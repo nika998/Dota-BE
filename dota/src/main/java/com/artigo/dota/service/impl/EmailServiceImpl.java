@@ -1,5 +1,6 @@
 package com.artigo.dota.service.impl;
 
+import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
     private String orderArrivedMailSubject;
 
     @Override
-    public void sendOrderMail(List<String> recipientList, Map<String, String> orderInfo) {
+    public void sendOrderMail(List<String> recipientList, OrderDO order) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -37,7 +38,7 @@ public class EmailServiceImpl implements EmailService {
 
             // Process the HTML template with Thymeleaf
             Context context = new Context();
-            context.setVariable("title", orderInfo.get("title"));
+            context.setVariable("order", order);
 //            context.setVariable("content", content);
             String htmlContent = templateEngine.process("newOrderEmailTemplate", context);
 

@@ -4,7 +4,17 @@
     <title>New Order Email Template</title>
 </head>
 <body>
-<h1 th:text="${title}">Default Title</h1>
-<p th:text="${content}">Default Content</p>
+<h1 th:text="${order.fullName}">Default Title</h1>
+<p th:text="${order.email}">Default Content</p>
+<p th:text="${order.city}">Default Content</p>
+<p th:text="${order.postalCode}">Default Content</p>
+<p th:text="${order.address}">Default Content</p>
+<p th:text="${order.flatNumber}">Default Content</p>
+<p th:text="${order.description}">Default Content</p>
+
+<tr th:each="product: ${order.products}">
+    <td th:text="${product.name}" />
+    <td th:text="${product.quantity}" />
+</tr>
 </body>
 </html>
