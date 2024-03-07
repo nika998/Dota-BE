@@ -1,6 +1,7 @@
 package com.artigo.dota.service.impl;
 
 import com.artigo.dota.dto.ProductDTO;
+import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.mapper.ProductMapper;
 import com.artigo.dota.repository.ProductRepository;
@@ -25,10 +26,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        List<String> recipientsList = new ArrayList<>(Arrays.asList("dulovicnika27@gmail.com"));
-        Map<String,String> orderInfo = Map.of("title","New order has arrived");
-
-        emailService.sendOrderMail(recipientsList, orderInfo);
         return  productRepository.findAll().stream().map(productMapper::entityToDto)
                 .collect(Collectors.toList());
 
