@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/dota
+    username: DOTA_BAGS
+    password: DOTA_BAGS
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  security:
+    user:
+      name: 'DOTA_BAGS'
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 'dulovicnika27@gmail.com'
+    password: 'bfdg emsj scao egsi'
+    smtp:
+      ssl:
+        protocols: 'TLSv1.2'
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            required: true
+            enable: true
+
+file:
+  upload-dir: C:/Users/igor.popovic/Desktop/Dota project/dota/src/main/resources/images
+
+mail:
+  order:
+    arrived:
+      subject: 'New order'
