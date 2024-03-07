@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dota
+      MYSQL_USER: DOTA_BAGS
+      MYSQL_PASSWORD: DOTA_BAGS
+    ports:
+      - "3306:3306"  # Expose MySQL port to host machine
+    volumes:
+      - mysql_data:/var/lib/mysql  # Mount volume for database data persistence
+
+volumes:
+  mysql_data:  # Define volume for MySQL data persistence
