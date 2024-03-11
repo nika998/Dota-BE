@@ -30,7 +30,7 @@ spring:
             enable: true
 
 file:
-  upload-dir: C:/Users/igor.popovic/Desktop/Dota project/dota/src/main/resources/images
+  upload-dir: ${FILE_UPLOAD_DIR}
 
 mail:
   order:
