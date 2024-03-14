@@ -13,7 +13,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -39,7 +38,6 @@ public class EmailServiceImpl implements EmailService {
             // Process the HTML template with Thymeleaf
             Context context = new Context();
             context.setVariable("order", order);
-//            context.setVariable("content", content);
             String htmlContent = templateEngine.process("newOrderEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content

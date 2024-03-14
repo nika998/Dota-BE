@@ -5,8 +5,6 @@ spring:
     password: DOTA_BAGS
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -28,6 +26,9 @@ spring:
           starttls:
             required: true
             enable: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR}
@@ -36,3 +37,10 @@ mail:
   order:
     arrived:
       subject: 'New order'
+
+aws:
+  region: 'eu-central-1'
+  s3:
+    bucket: 'dota-bucket-test'
+    image-url-prefix: 'https://dota-bucket-test.s3.eu-central-1.amazonaws.com'
+    root-folder: 'images'

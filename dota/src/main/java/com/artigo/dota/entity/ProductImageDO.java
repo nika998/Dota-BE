@@ -4,29 +4,29 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity(name = "product_image")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Where(clause = "deleted = false")
 public class ProductImageDO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductDO product;
-
     @Column(name = "color")
     private String color;
 
     @Column(name = "display")
-    private boolean isDisplay;
+    private Boolean isDisplay;
 
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
 
+    @Column(name = "deleted")
+    private Boolean isDeleted;
 }
