@@ -4,10 +4,11 @@ import com.artigo.dota.dto.ProductDTO;
 import com.artigo.dota.dto.ProductImageDTO;
 import com.artigo.dota.dto.ProductImageUrlDTO;
 import com.artigo.dota.dto.ProductSubmitDTO;
-import com.artigo.dota.dto.converter.ProductSubmitToProductDTO;
-import com.artigo.dota.entity.ProductDO;
+import com.artigo.dota.mapper.ProductMapper;
 import com.artigo.dota.service.ProductImageService;
 import com.artigo.dota.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +22,27 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductImageService productImageService;
-    private final ProductSubmitToProductDTO productConverter;
+    private final ProductMapper productMapper;
 
-    public ProductController(ProductService productService, ProductImageService productImageService, ProductSubmitToProductDTO productConverter) {
+    public ProductController(ProductService productService, ProductImageService productImageService, ProductMapper productMapper) {
         this.productService = productService;
         this.productImageService = productImageService;
-        this.productConverter = productConverter;
+        this.productMapper = productMapper;
     }
 
     @GetMapping()
-    public List<ProductDTO> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<ProductDTO>> getProductsByPage(Pageable pageable) {
+        return ResponseEntity.ok(productService.getProductsByPage(pageable));
     }
 
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping
@@ -83,10 +89,10 @@ public class ProductController {
         }
 
         try {
-            ProductDTO productDTO = productConverter.convert(product);
+            ProductDTO productDTO = productMapper.submitDtoToDto(product);
 
-            ProductDO savedProduct = productService.saveProduct(productDTO, uploadedImagesDTO);
-            return ResponseEntity.ok()
+            ProductDTO savedProduct = productService.saveProduct(productDTO, uploadedImagesDTO);
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(savedProduct);
 
         } catch (RuntimeException e) {

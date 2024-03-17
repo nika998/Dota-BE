@@ -27,7 +27,8 @@
 <table border="1">
     <thead>
     <tr>
-        <th>Product</th>
+        <th>Product name</th>
+        <th>Product type</th>
         <th>Quantity</th>
         <th>Color</th>
     </tr>
@@ -35,6 +36,7 @@
     <tbody>
     <tr th:each="item : ${order.orderItems}">
         <td th:text="${item.product.name}"></td>
+        <td th:text="${item.product.type}"></td>
         <td th:text="${item.quantity}"></td>
         <td th:text="${item.color}"></td>
     </tr>

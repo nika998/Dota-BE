@@ -2,6 +2,7 @@ package com.artigo.dota.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,4 +19,5 @@ public class OrderDTO {
     private String description;
     private List<OrderItemDTO> orderItems;
     private double totalPrice;
+    private LocalDateTime createdAt;
 }

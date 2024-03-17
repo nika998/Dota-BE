@@ -7,10 +7,11 @@ import com.artigo.dota.entity.ProductImageDO;
 import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.mapper.ProductMapper;
 import com.artigo.dota.repository.ProductRepository;
-import com.artigo.dota.service.EmailService;
 import com.artigo.dota.service.ProductImageService;
 import com.artigo.dota.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,6 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductMapper productMapper;
     @Autowired
-    private EmailService emailService;
-    @Autowired
     private ProductImageService productImageService;
     @Autowired
     private ProductImageMapper productImageMapper;
@@ -33,7 +32,12 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getAllProducts() {
         return  productRepository.findAll().stream().map(productMapper::entityToDto)
                 .toList();
+    }
 
+    @Override
+    public Page<ProductDTO> getProductsByPage(Pageable pageable) {
+        Page<ProductDO> productPage = productRepository.findAll(pageable);
+        return productPage.map(productMapper::entityToDto);
     }
 
     @Override
@@ -44,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDO saveProduct(ProductDTO product, List<ProductImageUrlDTO> uploadedImagesDTO) {
+    public ProductDTO saveProduct(ProductDTO product, List<ProductImageUrlDTO> uploadedImagesDTO) {
         ProductDO productDO = productMapper.dtoToEntity(product);
         List<ProductImageDO> uploadImagesDO = uploadedImagesDTO.stream().map(productImageMapper::dtoToEntity)
                 .toList();
@@ -55,6 +59,6 @@ public class ProductServiceImpl implements ProductService {
         }
         List<ProductImageDO> savedProductImagesDO = productImageService.saveAll(uploadImagesDO);
         savedProduct.setImages(savedProductImagesDO);
-        return savedProduct;
+        return productMapper.entityToDto(savedProduct);
     }
 }

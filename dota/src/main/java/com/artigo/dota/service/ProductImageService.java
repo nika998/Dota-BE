@@ -16,7 +16,7 @@ public interface ProductImageService {
 
     List<ProductImageDO> saveAll(List<ProductImageDO> images);
 
-    void deleteObject(String key);
+    boolean deleteImage(String key);
 
     void deleteUploadedImages(List<ProductImageUrlDTO> uploadedImagesDTO);
 }

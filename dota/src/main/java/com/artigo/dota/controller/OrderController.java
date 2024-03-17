@@ -25,6 +25,6 @@ public class OrderController {
         List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItems();
         orderDTO.setOrderItems(null);
         OrderDTO savedOrder = this.orderService.saveOrder(orderDTO, orderItemDTOList);
-        return savedOrder != null ? ResponseEntity.ok(savedOrder) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((OrderDTO) null);
+        return savedOrder != null ? ResponseEntity.status(HttpStatus.CREATED).body(savedOrder) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((OrderDTO) null);
     }
 }

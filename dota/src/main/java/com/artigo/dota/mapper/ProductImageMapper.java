@@ -12,6 +12,18 @@ public interface ProductImageMapper {
     ProductImageDO dtoToEntity(ProductImageUrlDTO productImageDTO);
     ProductImageUrlDTO entityToDto(ProductImageDO productImage);
 
+    default ProductImageUrlDTO DtoToUrlDto(ProductImageDTO productImageDTO, String productImageUrl) {
+        ProductImageUrlDTO productImageUrlDTO = new ProductImageUrlDTO();
+        if(productImageDTO.getId() != null) {
+            productImageUrlDTO.setId(productImageDTO.getId());
+        }
+        productImageUrlDTO.setIsDisplay(productImageDTO.getIsDisplay());
+        productImageUrlDTO.setColor(productImageDTO.getColor());
+        productImageUrlDTO.setImagePath(productImageUrl);
+
+        return productImageUrlDTO;
+    }
+
     default Boolean mapIsDeleted() {
         return false;
     }
