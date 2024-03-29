@@ -47,6 +47,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(htmlContent, true); // Set the HTML content
 
             emailSender.send(message);
+            log.info("Mail with saved order successfully sent");
         } catch (MessagingException e) {
             log.error("Could not send an email");
             e.printStackTrace();
@@ -90,6 +91,7 @@ public class EmailServiceImpl implements EmailService {
 
             // Send the email
             emailSender.send(message);
+            log.info("Mail with orders report successfully sent");
         } catch (MessagingException e) {
             log.error("Could not send an email");
             e.printStackTrace();

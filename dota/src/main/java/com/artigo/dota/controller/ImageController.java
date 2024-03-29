@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("api/images")
+@RequestMapping("/images")
 public class ImageController {
 
     @Autowired

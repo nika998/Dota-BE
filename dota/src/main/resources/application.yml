@@ -4,13 +4,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-  security:
-    user:
-      name: 'DOTA_BAGS'
   mail:
     host: smtp.gmail.com
     port: 587
@@ -32,6 +25,9 @@ spring:
 
 server:
   port: ${PORT:8080}
+  servlet:
+    context-path: /dota
+    path: /api
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR}

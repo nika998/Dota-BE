@@ -43,9 +43,9 @@ public class OrderExportServiceImpl implements OrderExportService {
         this.emailService = emailService;
     }
 
-//    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
-    @Scheduled(fixedDelay = 120000) // Every first day of the month at 12 PM
+    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
     public void exportDailyOrdersExcel() {
+        log.info("Daily orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
         LocalDateTime endDate = LocalDateTime.now();
 
@@ -59,9 +59,9 @@ public class OrderExportServiceImpl implements OrderExportService {
         }
     }
 
-//    @Scheduled(cron = "0 0 12 1 * *") // Every first day of the month at 12 PM
-    @Scheduled(fixedDelay = 120000) // Every first day of the month at 12 PM
+    @Scheduled(cron = "0 0 12 1 * *") // Every first day of the month at 12 PM
     public void exportMonthlyOrdersExcel() {
+        log.info("Monthly orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
@@ -99,6 +99,7 @@ public class OrderExportServiceImpl implements OrderExportService {
             String excelFilePath = tempDir.resolve(excelFileName).toString();
             try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
                 workbook.write(fos);
+                log.info("Orders excel file successfully created");
             }
 
             List<String> recipientsList = new ArrayList<>(Arrays.asList(mailDefaultRecipient));
@@ -128,7 +129,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         row.createCell(colNum++).setCellValue(order.getFlatNumber());
         row.createCell(colNum++).setCellValue(order.getPhone());
         row.createCell(colNum++).setCellValue(order.getDescription());
-        row.createCell(colNum++).setCellValue(order.getTotalPrice());
+        row.createCell(colNum++).setCellValue(order.getTotalPrice().doubleValue());
         row.createCell(colNum++).setCellValue(order.getCreatedAt().toString());
         row.createCell(colNum++).setCellValue(orderItem.getProduct().getName());
         row.createCell(colNum++).setCellValue(orderItem.getProduct().getType());
