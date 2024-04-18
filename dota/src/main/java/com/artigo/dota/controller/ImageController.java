@@ -1,38 +1,29 @@
 package com.artigo.dota.controller;
 
-import com.artigo.dota.service.ImageService;
+import com.artigo.dota.service.ProductImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("api/images")
+@RequestMapping("/images")
 public class ImageController {
 
     @Autowired
-    private ImageService imageService;
+    private ProductImageService productImageService;
 
-    @PostMapping("/upload")
-    public String uploadImage(@RequestParam("file") MultipartFile file,
-                              @RequestParam("directoryPath") String directoryPath,
-                              @RequestParam("fileName") String fileName) {
-        return imageService.saveImage(file, directoryPath, fileName);
+    @PostMapping(value = "/upload-image",
+                 consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadImage(@RequestParam("file") MultipartFile file,
+                            @RequestParam("imageUrl") String imageUrl) {
+        productImageService.uploadProductImage(imageUrl, file);
     }
 
-    @PostMapping("/get")
-    public ResponseEntity<byte[]> getImage(@RequestParam("directoryPath") String directoryPath,
-                                           @RequestParam("fileName") String fileName) {
-        // Load the image as a classpath resource
-        byte[] imageData = imageService.getImage(directoryPath, fileName);
-        if (imageData != null) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(imageData);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping(value = "/{productImageId}/get-image",
+                produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getImage(@PathVariable("productImageId") Long productImageId) {
+        return productImageService.getProductImage(productImageId);
     }
 }

@@ -1,20 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>New Order Email Template</title>
+    <meta charset="UTF-8">
+    <title>New Order Notification</title>
 </head>
 <body>
-<h1 th:text="${order.fullName}">Default Title</h1>
-<p th:text="${order.email}">Default Content</p>
-<p th:text="${order.city}">Default Content</p>
-<p th:text="${order.postalCode}">Default Content</p>
-<p th:text="${order.address}">Default Content</p>
-<p th:text="${order.flatNumber}">Default Content</p>
-<p th:text="${order.description}">Default Content</p>
+<h1>New Order Notification</h1>
 
-<tr th:each="product: ${order.products}">
-    <td th:text="${product.name}" />
-    <td th:text="${product.quantity}" />
-</tr>
+<p>Hello,</p>
+
+<p>A new order has been placed with the following details:</p>
+
+<p>Order ID: <span th:text="${#strings.escapeXml(order.id)}"></span></p>
+<p>Customer Name: <span th:text="${#strings.escapeXml(order.fullName)}"></span></p>
+<p>Email: <span th:text="${#strings.escapeXml(order.email)}"></span></p>
+<p>City: <span th:text="${#strings.escapeXml(order.city)}"></span></p>
+<p>Postal Code: <span th:text="${#strings.escapeXml(order.postalCode)}"></span></p>
+<p>Address: <span th:text="${#strings.escapeXml(order.address)}"></span></p>
+<p>Flat Number: <span th:text="${#strings.escapeXml(order.flatNumber)}"></span></p>
+<p>Phone: <span th:text="${#strings.escapeXml(order.phone)}"></span></p>
+<p>Description: <span th:text="${#strings.escapeXml(order.description)}"></span></p>
+<p>Total Price: <span th:text="${#strings.escapeXml(order.totalPrice)}"></span></p>
+<p>Created At: <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
+
+<h2>Order Items:</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Product name</th>
+        <th>Product type</th>
+        <th>Quantity</th>
+        <th>Color</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${order.orderItems}">
+        <td><span th:text="${#strings.escapeXml(item.product.name)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(item.product.type)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(item.quantity)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(item.color)}"></span></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>Please take necessary actions to fulfill the order.</p>
+
+<p>Thank you!</p>
 </body>
 </html>
