@@ -11,10 +11,8 @@ import org.mapstruct.Mapping;
 public interface OrderMapper {
     @Mapping(target = "isDeleted", expression = "java(mapIsDeleted())")
     OrderDO dtoToEntity(OrderDTO orderDTO);
-    OrderDTO entityToDto(OrderDO orderDO);
 
-    @Mapping(target = "images", ignore = true) // Ignore mapping images list
-    ProductDTO productDOToProductDTO(ProductDO productDO);
+    OrderDTO entityToDto(OrderDO orderDO);
 
     default Boolean mapIsDeleted() {
         return false;

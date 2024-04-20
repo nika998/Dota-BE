@@ -17,14 +17,11 @@ public class OrderItemDO {
     private Long order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductDO product;
+    @JoinColumn(name = "product_details_id", nullable = false)
+    private ProductDetailsDO productDetails;
 
     @Column(name = "quantity")
     private int quantity;
-
-    @Column(name = "color")
-    private String color;
 
     @Column(name = "deleted")
     private Boolean isDeleted;

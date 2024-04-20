@@ -11,9 +11,6 @@ public class ProductImageDTO {
 
     private Long id;
 
-    @NotNull(message = "Color is required")
-    private String color;
-
     @NotNull(message = "isDisplay is required")
     private Boolean isDisplay;
 

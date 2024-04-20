@@ -2,6 +2,7 @@ package com.artigo.dota.controller;
 
 import com.artigo.dota.dto.OrderDTO;
 import com.artigo.dota.dto.OrderItemDTO;
+import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,10 @@ public class OrderController {
     public ResponseEntity<OrderDTO> saveOrder(@RequestBody OrderDTO orderDTO) {
         List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItems();
         orderDTO.setOrderItems(null);
-        OrderDTO savedOrder = this.orderService.saveOrder(orderDTO, orderItemDTOList);
-        return savedOrder != null ? ResponseEntity.status(HttpStatus.CREATED).body(savedOrder) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((OrderDTO) null);
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(orderService.checkOrderAndSendMail(orderDTO, orderItemDTOList));
+        } catch (OrderItemsNonAvailableException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getOrderDTO());
+        }
     }
 }

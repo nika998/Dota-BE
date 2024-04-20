@@ -46,19 +46,19 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.entityToDto(product);
     }
 
-    @Override
-    @Transactional
-    public ProductDTO saveProduct(ProductDTO product, List<ProductImageUrlDTO> uploadedImagesDTO) {
-        ProductDO productDO = productMapper.dtoToEntity(product);
-        List<ProductImageDO> uploadImagesDO = uploadedImagesDTO.stream().map(productImageMapper::dtoToEntity)
-                .toList();
-        ProductDO savedProduct = productRepository.save(productDO);
-        for (ProductImageDO productImageDO:
-                uploadImagesDO) {
-             productImageDO.setProductId(savedProduct.getId());
-        }
-        List<ProductImageDO> savedProductImagesDO = productImageService.saveAll(uploadImagesDO);
-        savedProduct.setImages(savedProductImagesDO);
-        return productMapper.entityToDto(savedProduct);
-    }
+//    @Override
+//    @Transactional
+//    public ProductDTO saveProduct(ProductDTO product, List<ProductImageUrlDTO> uploadedImagesDTO) {
+//        ProductDO productDO = productMapper.dtoToEntity(product);
+//        List<ProductImageDO> uploadImagesDO = uploadedImagesDTO.stream().map(productImageMapper::dtoToEntity)
+//                .toList();
+//        ProductDO savedProduct = productRepository.save(productDO);
+//        for (ProductImageDO productImageDO:
+//                uploadImagesDO) {
+//             productImageDO.setProductId(savedProduct.getId());
+//        }
+//        List<ProductImageDO> savedProductImagesDO = productImageService.saveAll(uploadImagesDO);
+//        savedProduct.setImages(savedProductImagesDO);
+//        return productMapper.entityToDto(savedProduct);
+//    }
 }

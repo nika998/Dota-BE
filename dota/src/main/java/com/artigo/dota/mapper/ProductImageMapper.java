@@ -18,7 +18,6 @@ public interface ProductImageMapper {
             productImageUrlDTO.setId(productImageDTO.getId());
         }
         productImageUrlDTO.setIsDisplay(productImageDTO.getIsDisplay());
-        productImageUrlDTO.setColor(productImageDTO.getColor());
         productImageUrlDTO.setImagePath(productImageUrl);
 
         return productImageUrlDTO;

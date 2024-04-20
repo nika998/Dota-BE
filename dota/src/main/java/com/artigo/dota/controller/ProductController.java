@@ -91,9 +91,11 @@ public class ProductController {
         try {
             ProductDTO productDTO = productMapper.submitDtoToDto(product);
 
-            ProductDTO savedProduct = productService.saveProduct(productDTO, uploadedImagesDTO);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(savedProduct);
+//            ProductDTO savedProduct = productService.saveProduct(productDTO, uploadedImagesDTO);
+//            return ResponseEntity.status(HttpStatus.CREATED)
+//                    .body(savedProduct);
+
+            return null;
 
         } catch (RuntimeException e) {
             productImageService.deleteUploadedImages(uploadedImagesDTO);

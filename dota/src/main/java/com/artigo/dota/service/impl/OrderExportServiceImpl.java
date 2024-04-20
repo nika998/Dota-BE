@@ -1,10 +1,10 @@
 package com.artigo.dota.service.impl;
 
-import com.artigo.dota.dto.OrderDTO;
-import com.artigo.dota.dto.OrderItemDTO;
 import com.artigo.dota.entity.OrderDO;
+import com.artigo.dota.entity.OrderItemDO;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
+import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.EmailService;
 import com.artigo.dota.service.OrderExportService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +30,20 @@ import java.util.List;
 @Slf4j
 public class OrderExportServiceImpl implements OrderExportService {
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+
+    private final ProductRepository productRepository;
+
     private final EmailService emailService;
+
     @Value("${spring.mail.username}")
     private String mailDefaultRecipient;
+
     @Value("${excel.sheet.name:Orders}")
     private String excelSheetName;
 
-    public OrderExportServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, EmailService emailService) {
+    public OrderExportServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, EmailService emailService) {
         this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
+        this.productRepository = productRepository;
         this.emailService = emailService;
     }
 
@@ -52,9 +56,9 @@ public class OrderExportServiceImpl implements OrderExportService {
         List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
 
         try {
-            generateExcelFile(orders.stream().map(orderMapper::entityToDto).toList(),true);
+            generateExcelFile(orders,true);
         } catch (IOException e) {
-            log.error("Could not generate excel file");
+            log.error("Could not generate daily excel file");
             e.printStackTrace();
         }
     }
@@ -68,14 +72,14 @@ public class OrderExportServiceImpl implements OrderExportService {
         List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
 
         try {
-            generateExcelFile(orders.stream().map(orderMapper::entityToDto).toList(),false);
+            generateExcelFile(orders,false);
         } catch (IOException e) {
-            log.error("Could not generate excel file");
+            log.error("Could not generate monthly excel file");
             e.printStackTrace();
         }
     }
 
-    private void generateExcelFile(List<OrderDTO> orders, boolean daily) throws IOException {
+    private void generateExcelFile(List<OrderDO> orders, boolean daily) throws IOException {
         try(Workbook workbook = new XSSFWorkbook()){
             Sheet sheet = workbook.createSheet(excelSheetName);
 
@@ -83,8 +87,8 @@ public class OrderExportServiceImpl implements OrderExportService {
             Row headerRow = sheet.createRow(rowNum++);
             this.createHeaderRow(headerRow);
 
-            for (OrderDTO order : orders) {
-                for (OrderItemDTO orderItem : order.getOrderItems()) {
+            for (OrderDO order : orders) {
+                for (OrderItemDO orderItem : order.getOrderItems()) {
                     Row row = sheet.createRow(rowNum++);
                     this.fillOrderItemRow(row, order, orderItem);
                 }
@@ -118,8 +122,11 @@ public class OrderExportServiceImpl implements OrderExportService {
         }
     }
 
-    private void fillOrderItemRow(Row row, OrderDTO order, OrderItemDTO orderItem) {
+    private void fillOrderItemRow(Row row, OrderDO order, OrderItemDO orderItem) {
+
+        var product = productRepository.findById(orderItem.getProductDetails().getProductId());
         int colNum = 0;
+
         row.createCell(colNum++).setCellValue(order.getId());
         row.createCell(colNum++).setCellValue(order.getFullName());
         row.createCell(colNum++).setCellValue(order.getEmail());
@@ -131,9 +138,9 @@ public class OrderExportServiceImpl implements OrderExportService {
         row.createCell(colNum++).setCellValue(order.getDescription());
         row.createCell(colNum++).setCellValue(order.getTotalPrice().doubleValue());
         row.createCell(colNum++).setCellValue(order.getCreatedAt().toString());
-        row.createCell(colNum++).setCellValue(orderItem.getProduct().getName());
-        row.createCell(colNum++).setCellValue(orderItem.getProduct().getType());
+        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getName():"Unknown");
+        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getType():"Unknown");
         row.createCell(colNum++).setCellValue(orderItem.getQuantity());
-        row.createCell(colNum).setCellValue(orderItem.getColor());
+        row.createCell(colNum).setCellValue(orderItem.getProductDetails().getColor());
     }
 }
