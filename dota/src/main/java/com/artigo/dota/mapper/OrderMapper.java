@@ -1,9 +1,7 @@
 package com.artigo.dota.mapper;
 
 import com.artigo.dota.dto.OrderDTO;
-import com.artigo.dota.dto.ProductDTO;
 import com.artigo.dota.entity.OrderDO;
-import com.artigo.dota.entity.ProductDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

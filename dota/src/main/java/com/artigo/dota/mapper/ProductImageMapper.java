@@ -12,7 +12,7 @@ public interface ProductImageMapper {
     ProductImageDO dtoToEntity(ProductImageUrlDTO productImageDTO);
     ProductImageUrlDTO entityToDto(ProductImageDO productImage);
 
-    default ProductImageUrlDTO DtoToUrlDto(ProductImageDTO productImageDTO, String productImageUrl) {
+    default ProductImageUrlDTO dtoToUrlDto(ProductImageDTO productImageDTO, String productImageUrl) {
         ProductImageUrlDTO productImageUrlDTO = new ProductImageUrlDTO();
         if(productImageDTO.getId() != null) {
             productImageUrlDTO.setId(productImageDTO.getId());

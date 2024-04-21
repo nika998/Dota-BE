@@ -23,15 +23,10 @@ public class ProductSubmitDTO {
     @NotBlank(message = "Type is required")
     private String type;
 
-    @Min(value = 0, message = "Quantity must be non-negative")
-    private int quantity;
-
-    private String info;
-
     private String size;
 
     @Valid
-    @NotNull(message = "Product images are required")
-    private List<ProductImageDTO> images;
+    @NotNull(message = "Product details are required")
+    private List<ProductDetailsSubmitDTO> productDetails;
 
 }

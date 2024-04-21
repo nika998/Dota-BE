@@ -4,7 +4,7 @@ import com.artigo.dota.dto.OrderDTO;
 
 public class OrderItemsNonAvailableException extends RuntimeException{
 
-    private OrderDTO orderDTO;
+    private final OrderDTO orderDTO;
 
     public OrderItemsNonAvailableException(String message, OrderDTO orderDTO) {
         super(message);

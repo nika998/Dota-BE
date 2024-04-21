@@ -97,16 +97,16 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name) {
+    public List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name, String color) {
         List<ProductImageUrlDTO> uploadedProductImagesDTO = new ArrayList<>();
         if(images != null) {
             for (ProductImageDTO productImageDTO : images) {
                 String imageUrl =
-                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + "/" + UUID.randomUUID();
+                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + color + "/" + UUID.randomUUID();
                 String uploadedImageUrl = this.uploadProductImage(imageUrl, productImageDTO.getFile());
                 if(uploadedImageUrl != null) {
                     ProductImageUrlDTO convertedProductImageUrlDTO =
-                            productImageMapper.DtoToUrlDto(productImageDTO, s3Bucket.getImageUrlPrefix() + "/" + uploadedImageUrl);
+                            productImageMapper.dtoToUrlDto(productImageDTO, s3Bucket.getImageUrlPrefix() + "/" + uploadedImageUrl);
                     uploadedProductImagesDTO.add(convertedProductImageUrlDTO);
                 } else {
                     return uploadedProductImagesDTO;

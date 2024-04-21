@@ -10,6 +10,7 @@ CREATE TABLE order_table (
     phone VARCHAR(255),
     description VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE,
+    wait_reserved BOOLEAN DEFAULT TRUE,
     total_price DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -21,6 +22,7 @@ CREATE TABLE order_item (
     product_details_id BIGINT NOT NULL,
     quantity INT,
     deleted BOOLEAN DEFAULT FALSE,
+    available BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (order_id) REFERENCES order_table(id),
     FOREIGN KEY (product_details_id) REFERENCES product_details(id)
 );

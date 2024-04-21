@@ -9,7 +9,6 @@ import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         var itemsRecentlyNotAvailable = new ArrayList<OrderItemDTO>();
         orderItems.stream()
                 .forEach(orderItemDTO -> {
-                    if(orderItemDTO.getIsAvailable() && !productDetailsService.checkProductAvailability(orderItemDTO.getProductDetailsId(), orderItemDTO.getQuantity())) {
+                    if(Boolean.TRUE.equals(orderItemDTO.getIsAvailable()) && !productDetailsService.checkProductAvailability(orderItemDTO.getProductDetailsId(), orderItemDTO.getQuantity())) {
                         orderItemDTO.setIsAvailable(false);
                         itemsRecentlyNotAvailable.add(orderItemDTO);
                     }
