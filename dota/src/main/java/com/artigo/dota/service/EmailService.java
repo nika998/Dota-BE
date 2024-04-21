@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface EmailService {
 
-    void sendOrderMail(List<String> recipientList, OrderDO order);
+    void sendOrderMails(OrderDO savedOrder);
 
-    void sendOrdersExcelMail(List<String> recipientList, String excelFilePath, boolean daily, boolean isEmptyExcel);
+    void sendOrderMail(OrderDO order, boolean client);
+
+    void sendOrdersExcelMail(String excelFilePath, boolean daily, boolean isExcelEmpty);
 }

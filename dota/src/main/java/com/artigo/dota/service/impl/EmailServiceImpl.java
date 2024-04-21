@@ -15,6 +15,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class EmailServiceImpl implements EmailService {
 
     private final ProductRepository productRepository;
 
+    @Value("${spring.mail.username}")
+    private String mailDefaultRecipient;
     @Value("${mail.order.arrived.subject}")
     private String orderArrivedMailSubject;
     @Value("${mail.order.excel.daily-subject}")
@@ -42,7 +46,20 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendOrderMail(List<String> recipientList, OrderDO order) {
+    public void sendOrderMails(OrderDO savedOrder) {
+        sendOrderMail(savedOrder, false);
+        sendOrderMail(savedOrder, true);
+    }
+
+    @Override
+    public void sendOrderMail(OrderDO order, boolean client) {
+        List<String> recipientList = new ArrayList<>();
+        if(client) {
+            recipientList.add(order.getEmail());
+        } else {
+            recipientList.add(mailDefaultRecipient);
+        }
+
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -60,6 +77,7 @@ public class EmailServiceImpl implements EmailService {
 
             // Process the HTML template with Thymeleaf
             Context context = new Context();
+            context.setVariable("client", client);
             context.setVariable("order", order);
             context.setVariable("productsFromOrder", productsFromOrder);
             String htmlContent = templateEngine.process("newOrderEmailTemplate", context);
@@ -76,7 +94,9 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendOrdersExcelMail(List<String> recipientList, String excelFilePath, boolean daily, boolean isExcelEmpty) {
+    public void sendOrdersExcelMail(String excelFilePath, boolean daily, boolean isExcelEmpty) {
+        List<String> recipientList = new ArrayList<>(Collections.singletonList(mailDefaultRecipient));
+
         MimeMessage message = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true); // Enable multipart support
@@ -116,4 +136,5 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
         }
     }
+
 }

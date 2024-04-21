@@ -23,10 +23,8 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderDTO> saveOrder(@RequestBody OrderDTO orderDTO) {
-        List<OrderItemDTO> orderItemDTOList = orderDTO.getOrderItems();
-        orderDTO.setOrderItems(null);
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(orderService.checkOrderAndSendMail(orderDTO, orderItemDTOList));
+            return ResponseEntity.status(HttpStatus.CREATED).body(orderService.processOrder(orderDTO));
         } catch (OrderItemsNonAvailableException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getOrderDTO());
         }

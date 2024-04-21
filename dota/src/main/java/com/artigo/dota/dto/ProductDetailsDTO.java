@@ -15,6 +15,9 @@ public class ProductDetailsDTO {
     @NotNull(message = "Color is required")
     private String color;
 
+    @NotNull(message = "Product ID is required")
+    private Long productId;
+
     @Min(value = 0, message = "Quantity must be non-negative")
     private int quantity;
 

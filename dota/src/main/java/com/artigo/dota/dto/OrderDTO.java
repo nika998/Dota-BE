@@ -52,4 +52,6 @@ public class OrderDTO {
     private BigDecimal totalPrice;
 
     private LocalDateTime createdAt;
+
+    private Boolean waitReserved;
 }

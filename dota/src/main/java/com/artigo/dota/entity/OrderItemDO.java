@@ -14,7 +14,7 @@ public class OrderItemDO {
     private Long id;
 
     @Column(name = "order_id", nullable = false)
-    private Long order;
+    private Long orderId;
 
     @ManyToOne
     @JoinColumn(name = "product_details_id", nullable = false)
@@ -22,6 +22,9 @@ public class OrderItemDO {
 
     @Column(name = "quantity")
     private int quantity;
+
+    @Column(name = "available")
+    private Boolean isAvailable;
 
     @Column(name = "deleted")
     private Boolean isDeleted;

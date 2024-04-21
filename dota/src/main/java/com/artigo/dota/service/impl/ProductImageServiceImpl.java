@@ -23,10 +23,13 @@ import java.util.UUID;
 @Slf4j
 public class ProductImageServiceImpl implements ProductImageService {
 
-    private final S3Service s3Service;
     private final ProductImageRepository productImageRepository;
-    private final S3BucketProperties s3Bucket;
+
     private final ProductImageMapper productImageMapper;
+
+    private final S3Service s3Service;
+
+    private final S3BucketProperties s3Bucket;
 
     public ProductImageServiceImpl(S3Service s3Service, ProductImageRepository productImageRepository, S3BucketProperties s3Bucket, ProductImageMapper productImageMapper) {
         this.s3Service = s3Service;

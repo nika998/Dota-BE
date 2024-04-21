@@ -19,14 +19,19 @@ import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private ProductMapper productMapper;
+
     @Autowired
     private ProductImageService productImageService;
+
+    @Autowired
+    private ProductMapper productMapper;
+
     @Autowired
     private ProductImageMapper productImageMapper;
+
 
     @Override
     public List<ProductDTO> getAllProducts() {

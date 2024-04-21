@@ -35,9 +35,6 @@ public class OrderExportServiceImpl implements OrderExportService {
 
     private final EmailService emailService;
 
-    @Value("${spring.mail.username}")
-    private String mailDefaultRecipient;
-
     @Value("${excel.sheet.name:Orders}")
     private String excelSheetName;
 
@@ -47,7 +44,8 @@ public class OrderExportServiceImpl implements OrderExportService {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
+//    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
+    @Scheduled(fixedRate = 220000)
     public void exportDailyOrdersExcel() {
         log.info("Daily orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
@@ -63,7 +61,8 @@ public class OrderExportServiceImpl implements OrderExportService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 1 * *") // Every first day of the month at 12 PM
+    @Scheduled(fixedRate = 220000)
+//    @Scheduled(cron = "0 0 12 * * *")// Every first day of the month at 12 PM
     public void exportMonthlyOrdersExcel() {
         log.info("Monthly orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
@@ -106,14 +105,13 @@ public class OrderExportServiceImpl implements OrderExportService {
                 log.info("Orders excel file successfully created");
             }
 
-            List<String> recipientsList = new ArrayList<>(Arrays.asList(mailDefaultRecipient));
-            emailService.sendOrdersExcelMail(recipientsList, excelFilePath, daily, orders.isEmpty());
+            emailService.sendOrdersExcelMail(excelFilePath, daily, orders.isEmpty());
         }
     }
 
     private void createHeaderRow(Row headerRow) {
         String[] headers = {"Order ID", "Full Name", "Email", "City", "Postal Code", "Address", "Flat Number",
-                "Phone", "Description", "Total Price", "Created At", "Product Name", "Product Type",
+                "Phone", "Description", "Total Price", "Created At", "Delivery Type", "Product Name", "Product Type",
                 "Quantity", "Color"};
         int colNum = 0;
         for (String header : headers) {
@@ -138,6 +136,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         row.createCell(colNum++).setCellValue(order.getDescription());
         row.createCell(colNum++).setCellValue(order.getTotalPrice().doubleValue());
         row.createCell(colNum++).setCellValue(order.getCreatedAt().toString());
+        row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(order.getWaitReserved())? "Wait for reserved items to be available" : "Deliver available items first");
         row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getName():"Unknown");
         row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getType():"Unknown");
         row.createCell(colNum++).setCellValue(orderItem.getQuantity());

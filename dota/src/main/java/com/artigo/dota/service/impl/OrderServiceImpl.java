@@ -31,9 +31,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderItemMapper orderItemMapper;
 
-    @Value("${spring.mail.username}")
-    private String mailDefaultRecipient;
-
     public OrderServiceImpl(OrderRepository orderRepository, EmailService emailService, OrderMapper orderMapper, OrderItemMapper orderItemMapper, OrderItemService orderItemService, ProductDetailsService productDetailsService) {
         this.orderRepository = orderRepository;
         this.emailService = emailService;
@@ -44,55 +41,51 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO checkOrderAndSendMail(OrderDTO orderDTO, List<OrderItemDTO> orderItems) throws OrderItemsNonAvailableException {
-        OrderDO orderDO = orderMapper.dtoToEntity(orderDTO);
+    @Transactional
+    public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException {
 
-        var orderItemsNotAvailable = new ArrayList<OrderItemDO>();
-        var orderItemsAvailable = new ArrayList<OrderItemDO>();
+        var itemsRecentlyNotAvailable  = checkOrder(orderDTO.getOrderItems());
+        if(!itemsRecentlyNotAvailable.isEmpty()) {
+            orderDTO.setOrderItems(itemsRecentlyNotAvailable);
+            throw new OrderItemsNonAvailableException("Some of the ordered items are not available", orderDTO);
+        }
 
-        OrderDO savedOrder = checkAndSaveOrder(orderItemsAvailable, orderItemsNotAvailable, orderItems, orderDO);
+        OrderDO savedOrder = saveOrder(orderDTO);
 
-        List<String> recipientsList = new ArrayList<>(Collections.singletonList(mailDefaultRecipient));
-        emailService.sendOrderMail(recipientsList, savedOrder);
+        emailService.sendOrderMails(savedOrder);
 
-        if(orderItemsNotAvailable.isEmpty() && savedOrder != null)
-            return orderMapper.entityToDto(savedOrder);
+        return orderMapper.entityToDto(savedOrder);
+    }
 
-        orderDTO.setOrderItems(orderItemsNotAvailable.stream().map(orderItemMapper::entityToDto).toList());
-        throw new OrderItemsNonAvailableException("Some of the ordered items are not available", orderDTO);
+    @Override
+    public ArrayList<OrderItemDTO> checkOrder(List<OrderItemDTO> orderItems) {
+        var itemsRecentlyNotAvailable = new ArrayList<OrderItemDTO>();
+        orderItems.stream()
+                .forEach(orderItemDTO -> {
+                    if(orderItemDTO.getIsAvailable() && !productDetailsService.checkProductAvailability(orderItemDTO.getProductDetailsId(), orderItemDTO.getQuantity())) {
+                        orderItemDTO.setIsAvailable(false);
+                        itemsRecentlyNotAvailable.add(orderItemDTO);
+                    }
+                });
+        return itemsRecentlyNotAvailable;
     }
 
     @Override
     @Transactional
-    public OrderDO checkAndSaveOrder(ArrayList<OrderItemDO> availableItems, ArrayList<OrderItemDO> notAvailableItems, List<OrderItemDTO> orderItems, OrderDO orderDO){
-        orderItems.stream()
-                .map(orderItemMapper::dtoToEntity)
-                .forEach(orderItemDO -> {
-                    if (!productDetailsService.reduceProductQuantity(orderItemDO.getProductDetails().getId(), orderItemDO.getQuantity())) {
-                        notAvailableItems.add(orderItemDO);
-                    } else {
-                        availableItems.add(orderItemDO);
-                    }
+    public OrderDO saveOrder(OrderDTO orderDTO){
 
-                });
+        List<OrderItemDO> orderItemDOs = orderDTO.getOrderItems().stream()
+                        .map(orderItemMapper::dtoToEntity).toList();
 
-        if (!availableItems.isEmpty()) {
+        orderDTO.setOrderItems(null);
+        OrderDO orderDO = orderMapper.dtoToEntity(orderDTO);
+        orderDO.setCreatedAt(LocalDateTime.now());
 
-            orderDO.setCreatedAt(LocalDateTime.now());
-            OrderDO savedOrder = orderRepository.save(orderDO);
+        OrderDO savedOrder = orderRepository.save(orderDO);
 
-            List<OrderItemDO> orderItemDOs = availableItems.stream()
-                    .map(orderItemDO -> {
-                        orderItemDO.setOrder(savedOrder.getId());
-                        return orderItemDO;
-                    })
-                    .toList();
-            savedOrder.setOrderItems(orderItemService.saveAll(orderItemDOs));
+        savedOrder.setOrderItems(orderItemService.saveAll(orderItemDOs.stream().peek(orderItemDO -> orderItemDO.setOrderId(savedOrder.getId())).toList()));
 
-            return savedOrder;
-        }
-
-        return null;
+        return savedOrder;
     }
 
 }
