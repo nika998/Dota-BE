@@ -1,7 +1,9 @@
 package com.artigo.dota.service.impl;
 
+import com.artigo.dota.dto.ContactFormDTO;
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
+import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -32,12 +34,18 @@ public class EmailServiceImpl implements EmailService {
 
     @Value("${spring.mail.username}")
     private String mailDefaultRecipient;
+
     @Value("${mail.order.arrived.subject}")
     private String orderArrivedMailSubject;
+
     @Value("${mail.order.excel.daily-subject}")
     private String orderExcelMailSubject;
+
     @Value("${mail.order.excel.monthly-subject}")
     private String orderExcelMonthlyMailSubject;
+
+    @Value("${mail.contact-form.subject}")
+    private String contactFormMailSubject;
 
     public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
         this.emailSender = emailSender;
@@ -86,9 +94,9 @@ public class EmailServiceImpl implements EmailService {
 
             emailSender.send(message);
             log.info("Mail with saved order successfully sent");
-        } catch (MessagingException e) {
-            log.error("Could not send an email");
+        } catch (RuntimeException | MessagingException e) {
             e.printStackTrace();
+            throw new MailNotSentException("Could not send email with saved order");
         }
 
     }
@@ -131,9 +139,36 @@ public class EmailServiceImpl implements EmailService {
             // Send the email
             emailSender.send(message);
             log.info("Mail with orders report successfully sent");
-        } catch (MessagingException e) {
+        } catch (RuntimeException | MessagingException e) {
             log.error("Could not send an email");
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendContactMail(ContactFormDTO contactFormDTO) {
+        List<String> recipientList = new ArrayList<>();
+        recipientList.add(mailDefaultRecipient);
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(recipientList.toArray(new String[0]));
+            helper.setSubject(contactFormMailSubject);
+
+            // Process the HTML template with Thymeleaf
+            Context context = new Context();
+            context.setVariable("contactForm", contactFormDTO);
+            String htmlContent = templateEngine.process("contactFormEmailTemplate", context);
+
+            helper.setText(htmlContent, true); // Set the HTML content
+
+            emailSender.send(message);
+            log.info("Mail with new contact message successfully sent");
+        } catch (RuntimeException | MessagingException e) {
+            e.printStackTrace();
+            throw new MailNotSentException("Could not mail contact message");
         }
     }
 

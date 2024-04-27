@@ -2,6 +2,7 @@ package com.artigo.dota.controller;
 
 import com.artigo.dota.dto.OrderDTO;
 import com.artigo.dota.dto.OrderItemDTO;
+import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,13 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderDTO> saveOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(orderService.processOrder(orderDTO));
         } catch (OrderItemsNonAvailableException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getOrderDTO());
+        } catch (MailNotSentException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
         }
     }
 }
