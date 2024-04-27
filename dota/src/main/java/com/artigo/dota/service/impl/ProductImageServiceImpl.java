@@ -23,10 +23,13 @@ import java.util.UUID;
 @Slf4j
 public class ProductImageServiceImpl implements ProductImageService {
 
-    private final S3Service s3Service;
     private final ProductImageRepository productImageRepository;
-    private final S3BucketProperties s3Bucket;
+
     private final ProductImageMapper productImageMapper;
+
+    private final S3Service s3Service;
+
+    private final S3BucketProperties s3Bucket;
 
     public ProductImageServiceImpl(S3Service s3Service, ProductImageRepository productImageRepository, S3BucketProperties s3Bucket, ProductImageMapper productImageMapper) {
         this.s3Service = s3Service;
@@ -94,16 +97,16 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name) {
+    public List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name, String color) {
         List<ProductImageUrlDTO> uploadedProductImagesDTO = new ArrayList<>();
         if(images != null) {
             for (ProductImageDTO productImageDTO : images) {
                 String imageUrl =
-                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/" + productImageDTO.getColor() + "/" + UUID.randomUUID();
+                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + color + "/" + UUID.randomUUID();
                 String uploadedImageUrl = this.uploadProductImage(imageUrl, productImageDTO.getFile());
                 if(uploadedImageUrl != null) {
                     ProductImageUrlDTO convertedProductImageUrlDTO =
-                            productImageMapper.DtoToUrlDto(productImageDTO, s3Bucket.getImageUrlPrefix() + "/" + uploadedImageUrl);
+                            productImageMapper.dtoToUrlDto(productImageDTO, s3Bucket.getImageUrlPrefix() + "/" + uploadedImageUrl);
                     uploadedProductImagesDTO.add(convertedProductImageUrlDTO);
                 } else {
                     return uploadedProductImagesDTO;

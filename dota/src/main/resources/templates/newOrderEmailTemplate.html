@@ -9,7 +9,13 @@
 
 <p>Hello,</p>
 
-<p>A new order has been placed with the following details:</p>
+<div th:if="${!client}">
+    <p>A new order has been placed with the following details:</p>
+</div>
+
+<div th:if="${client}">
+    <p>Your order has been registered correctly.</p>
+</div>
 
 <p>Order ID: <span th:text="${#strings.escapeXml(order.id)}"></span></p>
 <p>Customer Name: <span th:text="${#strings.escapeXml(order.fullName)}"></span></p>
@@ -22,6 +28,7 @@
 <p>Description: <span th:text="${#strings.escapeXml(order.description)}"></span></p>
 <p>Total Price: <span th:text="${#strings.escapeXml(order.totalPrice)}"></span></p>
 <p>Created At: <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
+<p>Type of delivery: <span th:text="${order.waitReserved ? 'Wait for reserved items to be available' : 'Deliver available items first'}"></span></p>
 
 <h2>Order Items:</h2>
 <table border="1">
@@ -31,19 +38,27 @@
         <th>Product type</th>
         <th>Quantity</th>
         <th>Color</th>
+        <th>Availability</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="item : ${order.orderItems}">
-        <td><span th:text="${#strings.escapeXml(item.product.name)}"></span></td>
-        <td><span th:text="${#strings.escapeXml(item.product.type)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.name ?: 'Unknown')}"></span></td>
+        <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.type ?: 'Unknown')}"></span></td>
         <td><span th:text="${#strings.escapeXml(item.quantity)}"></span></td>
-        <td><span th:text="${#strings.escapeXml(item.color)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(item.productDetails.color)}"></span></td>
+        <td><span th:text="${item.isAvailable? 'Available' : 'Reserved'}"></span></td>
     </tr>
     </tbody>
 </table>
 
-<p>Please take necessary actions to fulfill the order.</p>
+<div th:if="${!client}">
+    <p>Please take necessary actions to fulfill the order.</p>
+</div>
+
+<div th:if="${client}">
+    <p>Your ordered items will be sent to you as soon as possible.</p>
+</div>
 
 <p>Thank you!</p>
 </body>

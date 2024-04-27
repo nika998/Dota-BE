@@ -9,9 +9,6 @@ public class ProductImageUrlDTO {
 
     private Long id;
 
-    @NotBlank(message = "Color is required")
-    private String color;
-
     @NotNull(message = "isDisplay is required")
     private Boolean isDisplay;
 

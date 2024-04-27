@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Form Submission</title>
+</head>
+<body>
+<h1>New Contact Form Submission</h1>
+<p>A new message has been received through the contact form:</p>
+<ul>
+    <li><strong>Full Name:</strong> <span th:text="${#strings.escapeXml(contactForm.fullName)}"></span></li>
+    <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(contactForm.email)}"></span></li>
+    <li th:if="${contactForm.phone}"><strong>Phone:</strong> <span th:text="${#strings.escapeXml(contactForm.phone)}"></span></li>
+    <li th:if="${contactForm.message}"><strong>Message:</strong> <span th:text="${#strings.escapeXml(contactForm.message)}"></span></li>
+</ul>
+</body>
+</html>

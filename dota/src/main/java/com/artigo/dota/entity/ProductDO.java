@@ -25,20 +25,14 @@ public class ProductDO {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "quantity")
-    private int quantity;
-
-    @Column(name = "info")
-    private String info;
-
     @Column(name = "size")
     private String size;
 
     @Column(name = "deleted")
     private Boolean isDeleted;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
-    private List<ProductImageDO> images;
+    private List<ProductDetailsDO> productDetails;
 
 }

@@ -9,9 +9,6 @@ spring:
     port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
-    smtp:
-      ssl:
-        protocols: 'TLSv1.2'
     properties:
       mail:
         smtp:
@@ -27,18 +24,23 @@ server:
   port: ${PORT:8080}
   servlet:
     context-path: /dota
-    path: /api
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR}
 
 mail:
+  recipients:
+    - ${MAIL_USERNAME}
   order:
     arrived:
       subject: 'New order'
     excel:
-      daily-subject: 'All orders made in previous 24h'
+      daily-subject: 'All orders made in past 24h'
       monthly-subject: 'All orders made in a previous month'
+  contact-form:
+    subject: 'New message from contact form'
+  newsletter:
+    subject: 'Newsletter subscriptions made in past 24h'
 
 aws:
   region: ${AWS_REGION}

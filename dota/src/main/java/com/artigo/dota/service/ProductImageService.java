@@ -12,7 +12,7 @@ public interface ProductImageService {
 
     byte[] getProductImage(Long productImageId);
 
-    List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name);
+    List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name, String color);
 
     List<ProductImageDO> saveAll(List<ProductImageDO> images);
 

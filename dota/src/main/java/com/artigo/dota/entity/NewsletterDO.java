@@ -1,26 +1,27 @@
 package com.artigo.dota.entity;
-
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
-@Entity(name = "product_image")
+import java.time.LocalDateTime;
+
+@Entity(name = "newsletter")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Where(clause = "deleted = false")
-public class ProductImageDO {
+public class NewsletterDO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "display")
-    private Boolean isDisplay;
+    private String email;
 
-    @Column(name = "image_path")
-    private String imagePath;
-
-    @Column(name = "product_detail_id", nullable = false)
-    private Long productDetailId;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Column(name = "deleted")
     private Boolean isDeleted;

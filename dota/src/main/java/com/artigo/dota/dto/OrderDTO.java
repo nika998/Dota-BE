@@ -52,4 +52,7 @@ public class OrderDTO {
     private BigDecimal totalPrice;
 
     private LocalDateTime createdAt;
+
+    @NotNull(message = "Choose wait reserved items option")
+    private Boolean waitReserved;
 }

@@ -1,18 +1,13 @@
 package com.artigo.dota.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ProductImageDTO {
 
     private Long id;
-
-    @NotNull(message = "Color is required")
-    private String color;
 
     @NotNull(message = "isDisplay is required")
     private Boolean isDisplay;

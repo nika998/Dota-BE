@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Newsletter Subscriptions</title>
+</head>
+<body>
+<h1>New Newsletter Subscriptions</h1>
+<th:block th:if="${not #lists.isEmpty(newsletters)}">
+    <p>The following email addresses have subscribed to the newsletter in the past 24 hours:</p>
+    <ul>
+        <th:block th:each="newsletter : ${newsletters}">
+            <li th:utext="${newsletter.email}"></li>
+        </th:block>
+    </ul>
+</th:block>
+<th:block th:if="${#lists.isEmpty(newsletters)}">
+    <p>No new newsletter subscriptions were made in the past 24 hours.</p>
+</th:block>
+</body>
+</html>

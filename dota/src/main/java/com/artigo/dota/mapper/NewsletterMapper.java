@@ -1,16 +1,17 @@
 package com.artigo.dota.mapper;
 
-import com.artigo.dota.dto.OrderDTO;
-import com.artigo.dota.entity.OrderDO;
+import com.artigo.dota.dto.NewsletterDTO;
+import com.artigo.dota.entity.NewsletterDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper
-public interface OrderMapper {
-    @Mapping(target = "isDeleted", expression = "java(mapIsDeleted())")
-    OrderDO dtoToEntity(OrderDTO orderDTO);
+public interface NewsletterMapper {
 
-    OrderDTO entityToDto(OrderDO orderDO);
+    @Mapping(target = "isDeleted", expression = "java(mapIsDeleted())")
+    NewsletterDO dtoToEntity(NewsletterDTO newsletterDTO);
+
+    NewsletterDTO entityToDto(NewsletterDO newsletterDO);
 
     default Boolean mapIsDeleted() {
         return false;

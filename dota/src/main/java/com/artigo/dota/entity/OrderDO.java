@@ -56,4 +56,7 @@ public class OrderDO {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "wait_reserved")
+    private Boolean waitReserved;
+
 }

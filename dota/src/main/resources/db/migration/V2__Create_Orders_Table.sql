@@ -10,7 +10,8 @@ CREATE TABLE order_table (
     phone VARCHAR(255),
     description VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE,
-    total_price DOUBLE,
+    wait_reserved BOOLEAN DEFAULT TRUE,
+    total_price DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -18,10 +19,10 @@ CREATE TABLE order_table (
 CREATE TABLE order_item (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    product_details_id BIGINT NOT NULL,
     quantity INT,
-    color VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE,
+    available BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (order_id) REFERENCES order_table(id),
-    FOREIGN KEY (product_id) REFERENCES product(id)
+    FOREIGN KEY (product_details_id) REFERENCES product_details(id)
 );

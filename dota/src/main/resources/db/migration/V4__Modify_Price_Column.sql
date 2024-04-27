@@ -1,2 +1,0 @@
-ALTER TABLE product MODIFY COLUMN price DECIMAL(10, 2);
-ALTER TABLE order_table MODIFY COLUMN total_price DECIMAL(10, 2);
