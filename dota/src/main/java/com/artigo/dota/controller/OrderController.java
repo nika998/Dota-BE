@@ -5,6 +5,7 @@ import com.artigo.dota.dto.OrderItemDTO;
 import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> saveOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> saveOrder(@RequestBody@Valid OrderDTO orderDTO) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(orderService.processOrder(orderDTO));
         } catch (OrderItemsNonAvailableException exception) {

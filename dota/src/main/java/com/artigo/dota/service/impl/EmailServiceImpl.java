@@ -1,6 +1,8 @@
 package com.artigo.dota.service.impl;
 
+import com.artigo.dota.configuration.EmailProperties;
 import com.artigo.dota.dto.ContactFormDTO;
+import com.artigo.dota.entity.NewsletterDO;
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
 import com.artigo.dota.exception.MailNotSentException;
@@ -18,7 +20,6 @@ import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,28 +27,16 @@ import java.util.List;
 @Slf4j
 public class EmailServiceImpl implements EmailService {
 
+    private final EmailProperties emailProperties;
+
     private final JavaMailSender emailSender;
 
     private final TemplateEngine templateEngine;
 
     private final ProductRepository productRepository;
 
-    @Value("${spring.mail.username}")
-    private String mailDefaultRecipient;
-
-    @Value("${mail.order.arrived.subject}")
-    private String orderArrivedMailSubject;
-
-    @Value("${mail.order.excel.daily-subject}")
-    private String orderExcelMailSubject;
-
-    @Value("${mail.order.excel.monthly-subject}")
-    private String orderExcelMonthlyMailSubject;
-
-    @Value("${mail.contact-form.subject}")
-    private String contactFormMailSubject;
-
-    public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
+    public EmailServiceImpl(EmailProperties emailProperties, JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
+        this.emailProperties = emailProperties;
         this.emailSender = emailSender;
         this.templateEngine = templateEngine;
         this.productRepository = productRepository;
@@ -65,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
         if(client) {
             recipientList.add(order.getEmail());
         } else {
-            recipientList.add(mailDefaultRecipient);
+            recipientList = emailProperties.getRecipients();
         }
 
         MimeMessage message = emailSender.createMimeMessage();
@@ -80,8 +69,11 @@ public class EmailServiceImpl implements EmailService {
         }
 
         try {
-            helper.setTo(recipientList.toArray(new String[0]));
-            helper.setSubject(orderArrivedMailSubject);
+            for (String recipient:
+                 recipientList) {
+                helper.setTo(recipient);
+            }
+            helper.setSubject(emailProperties.getOrderArrivedMailSubject());
 
             // Process the HTML template with Thymeleaf
             Context context = new Context();
@@ -103,24 +95,27 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendOrdersExcelMail(String excelFilePath, boolean daily, boolean isExcelEmpty) {
-        List<String> recipientList = new ArrayList<>(Collections.singletonList(mailDefaultRecipient));
+        List<String> recipientList = emailProperties.getRecipients();;
 
         MimeMessage message = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true); // Enable multipart support
-            helper.setTo(recipientList.toArray(new String[0]));
+            for (String recipient:
+                    recipientList) {
+                helper.setTo(recipient);
+            }
 
             // Process the Thymeleaf template
             String emailContent;
             if(daily){
-                helper.setSubject(orderExcelMailSubject);
+                helper.setSubject(emailProperties.getOrderExcelMailSubject());
                 if(!isExcelEmpty) {
                     emailContent = templateEngine.process("dailyOrdersEmailTemplate.html", new Context());
                 } else {
                     emailContent = templateEngine.process("noOrdersEmailTemplate.html", new Context());
                 }
             } else {
-                helper.setSubject(orderExcelMonthlyMailSubject);
+                helper.setSubject(emailProperties.getOrderExcelMonthlyMailSubject());
                 if (!isExcelEmpty) {
                     emailContent = templateEngine.process("monthlyOrdersEmailTemplate.html", new Context());
                 } else {
@@ -147,15 +142,17 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendContactMail(ContactFormDTO contactFormDTO) {
-        List<String> recipientList = new ArrayList<>();
-        recipientList.add(mailDefaultRecipient);
+        List<String> recipientList = emailProperties.getRecipients();;
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            helper.setTo(recipientList.toArray(new String[0]));
-            helper.setSubject(contactFormMailSubject);
+            for (String recipient:
+                    recipientList) {
+                helper.setTo(recipient);
+            }
+            helper.setSubject(emailProperties.getContactFormMailSubject());
 
             // Process the HTML template with Thymeleaf
             Context context = new Context();
@@ -169,6 +166,35 @@ public class EmailServiceImpl implements EmailService {
         } catch (RuntimeException | MessagingException e) {
             e.printStackTrace();
             throw new MailNotSentException("Could not mail contact message");
+        }
+    }
+
+    @Override
+    public void sendNewsletterMail(List<NewsletterDO> savedNewsletterDOs) {
+        List<String> recipientList = emailProperties.getRecipients();;
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            for (String recipient:
+                    recipientList) {
+                helper.setTo(recipient);
+            }
+            helper.setSubject(emailProperties.getNewsletterMailSubject());
+
+            // Process the HTML template with Thymeleaf
+            Context context = new Context();
+            context.setVariable("newsletters", savedNewsletterDOs);
+            String htmlContent = templateEngine.process("newsletterEmailTemplate", context);
+
+            helper.setText(htmlContent, true); // Set the HTML content
+
+            emailSender.send(message);
+            log.info("Mail with newsletter subscriptions successfully sent");
+        } catch (RuntimeException | MessagingException e) {
+            log.error("Could not send an email");
+            e.printStackTrace();
         }
     }
 

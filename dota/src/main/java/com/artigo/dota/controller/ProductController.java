@@ -3,6 +3,7 @@ package com.artigo.dota.controller;
 import com.artigo.dota.dto.*;
 import com.artigo.dota.exception.ImageProcessingException;
 import com.artigo.dota.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> saveProduct(
-            @RequestPart("product") ProductSubmitDTO product,
+            @RequestPart("product")@Valid ProductSubmitDTO product,
             @RequestPart("files") List<MultipartFile> files) {
 
         try {

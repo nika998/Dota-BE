@@ -53,5 +53,6 @@ public class OrderDTO {
 
     private LocalDateTime createdAt;
 
+    @NotNull(message = "Choose wait reserved items option")
     private Boolean waitReserved;
 }
