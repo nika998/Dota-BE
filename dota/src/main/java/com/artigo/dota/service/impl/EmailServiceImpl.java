@@ -95,7 +95,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendOrdersExcelMail(String excelFilePath, boolean daily, boolean isExcelEmpty) {
-        List<String> recipientList = emailProperties.getRecipients();;
+        List<String> recipientList = emailProperties.getRecipients();
 
         MimeMessage message = emailSender.createMimeMessage();
         try {
@@ -142,7 +142,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendContactMail(ContactFormDTO contactFormDTO) {
-        List<String> recipientList = emailProperties.getRecipients();;
+        List<String> recipientList = emailProperties.getRecipients();
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -171,7 +171,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendNewsletterMail(List<NewsletterDO> savedNewsletterDOs) {
-        List<String> recipientList = emailProperties.getRecipients();;
+        List<String> recipientList = emailProperties.getRecipients();
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);

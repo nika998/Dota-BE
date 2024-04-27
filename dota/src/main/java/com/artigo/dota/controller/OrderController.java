@@ -1,7 +1,6 @@
 package com.artigo.dota.controller;
 
 import com.artigo.dota.dto.OrderDTO;
-import com.artigo.dota.dto.OrderItemDTO;
 import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.service.OrderService;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
