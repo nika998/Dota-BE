@@ -43,13 +43,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendOrderMails(OrderDO savedOrder) {
+    public void sendOrderMails(OrderDO savedOrder) throws MailNotSentException {
         sendOrderMail(savedOrder, false);
         sendOrderMail(savedOrder, true);
     }
 
     @Override
-    public void sendOrderMail(OrderDO order, boolean client) {
+    public void sendOrderMail(OrderDO order, boolean client) throws MailNotSentException {
         List<String> recipientList = new ArrayList<>();
         if(client) {
             recipientList.add(order.getEmail());
@@ -141,7 +141,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendContactMail(ContactFormDTO contactFormDTO) {
+    public void sendContactMail(ContactFormDTO contactFormDTO) throws MailNotSentException {
         List<String> recipientList = emailProperties.getRecipients();
 
         MimeMessage message = emailSender.createMimeMessage();

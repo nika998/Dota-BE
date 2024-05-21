@@ -4,6 +4,7 @@ import com.artigo.dota.dto.*;
 import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.entity.ProductDetailsDO;
 import com.artigo.dota.exception.ImageProcessingException;
+import com.artigo.dota.exception.ProductNotProcessedException;
 import com.artigo.dota.mapper.ProductDetailsMapper;
 import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.mapper.ProductMapper;
@@ -62,22 +63,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) {
+    public ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         var productDetailsSubmitDTOs = product.getProductDetails();
         product.setProductDetails(null);
         ProductDO savedProduct = productRepository.save(productMapper.dtoToEntity(product));
         savedProduct.setProductDetails(new ArrayList<>());
-        productDetailsSubmitDTOs
-                .forEach(productDetailsSubmitDTO -> {
-                    productDetailsSubmitDTO.setProductId(savedProduct.getId());
-                    savedProduct.getProductDetails().add(processProductDetails(product, productDetailsSubmitDTO, files));
-                });
+        for (ProductDetailsSubmitDTO productDetailsSubmitDTO:
+             productDetailsSubmitDTOs) {
+            productDetailsSubmitDTO.setProductId(savedProduct.getId());
+            savedProduct.getProductDetails().add(processProductDetails(product, productDetailsSubmitDTO, files));
+        }
         return productMapper.entityToDto(savedProduct);
     }
 
     @Override
     @Transactional
-    public ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) {
+    public ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         if(files.size() < productDetails.getImages().size()) {
             throw new ImageProcessingException("Image files do not match with ProductImageDTOs");
         }
@@ -118,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
             return productDetailsService.saveProductDetails(productDetailsDTO, uploadedImagesDTO);
         } catch (RuntimeException e) {
             productImageService.deleteUploadedImages(uploadedImagesDTO);
-            throw new RuntimeException("Failed to save Product");
+            throw new ProductNotProcessedException("Failed to save Product");
         }
     }
 }

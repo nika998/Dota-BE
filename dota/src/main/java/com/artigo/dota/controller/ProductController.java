@@ -2,6 +2,7 @@ package com.artigo.dota.controller;
 
 import com.artigo.dota.dto.*;
 import com.artigo.dota.exception.ImageProcessingException;
+import com.artigo.dota.exception.ProductNotProcessedException;
 import com.artigo.dota.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -51,7 +52,7 @@ public class ProductController {
         }catch (ImageProcessingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
-        } catch (RuntimeException e) {
+        } catch (ProductNotProcessedException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }

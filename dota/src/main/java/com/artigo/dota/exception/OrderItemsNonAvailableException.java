@@ -2,7 +2,7 @@ package com.artigo.dota.exception;
 
 import com.artigo.dota.dto.OrderDTO;
 
-public class OrderItemsNonAvailableException extends RuntimeException{
+public class OrderItemsNonAvailableException extends Exception{
 
     private final OrderDTO orderDTO;
 
