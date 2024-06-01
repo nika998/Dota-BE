@@ -5,6 +5,7 @@ import com.artigo.dota.dto.ProductImageUrlDTO;
 import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.entity.ProductDetailsDO;
 import com.artigo.dota.entity.ProductImageDO;
+import com.artigo.dota.exception.EntityNotFoundException;
 import com.artigo.dota.mapper.ProductDetailsMapper;
 import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.repository.ProductDetailsRepository;
@@ -35,6 +36,12 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         this.productImageService = productImageService;
         this.productDetailsMapper = productDetailsMapper;
         this.productImageMapper = productImageMapper;
+    }
+
+    @Override
+    public ProductDetailsDTO getProductById(Long id) {
+        var productDetailsDO = productDetailsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
+        return productDetailsMapper.entityToDto(productDetailsDO);
     }
 
     @Override

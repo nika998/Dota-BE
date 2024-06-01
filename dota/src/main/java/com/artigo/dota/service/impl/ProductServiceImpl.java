@@ -3,6 +3,7 @@ package com.artigo.dota.service.impl;
 import com.artigo.dota.dto.*;
 import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.entity.ProductDetailsDO;
+import com.artigo.dota.exception.EntityNotFoundException;
 import com.artigo.dota.exception.ImageProcessingException;
 import com.artigo.dota.exception.ProductNotProcessedException;
 import com.artigo.dota.mapper.ProductDetailsMapper;
@@ -57,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO getProductById(Long id) {
-        ProductDO product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
         return productMapper.entityToDto(product);
     }
 

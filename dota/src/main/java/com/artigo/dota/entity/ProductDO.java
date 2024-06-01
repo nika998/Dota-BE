@@ -28,6 +28,9 @@ public class ProductDO {
     @Column(name = "size")
     private String size;
 
+    @Column(name = "new_collection")
+    private Boolean isNewCollection;
+
     @Column(name = "deleted")
     private Boolean isDeleted;
 

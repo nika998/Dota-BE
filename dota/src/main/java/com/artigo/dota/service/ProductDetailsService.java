@@ -18,4 +18,6 @@ public interface ProductDetailsService {
     List<ProductDetailsDO> saveAll(List<ProductDetailsDO> productDetailsDOList);
 
     ProductDetailsDO saveProductDetails(ProductDetailsDTO productDetailsDTO, List<ProductImageUrlDTO> uploadedImagesDTO);
+
+    ProductDetailsDTO getProductById(Long id);
 }
