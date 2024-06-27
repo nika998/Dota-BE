@@ -2,6 +2,8 @@ package com.artigo.dota.controller;
 
 import com.artigo.dota.dto.*;
 import com.artigo.dota.exception.ImageProcessingException;
+import com.artigo.dota.exception.ProductNotProcessedException;
+import com.artigo.dota.service.ProductDetailsService;
 import com.artigo.dota.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -20,8 +22,11 @@ public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    private final ProductDetailsService productDetailsService;
+
+    public ProductController(ProductService productService, ProductDetailsService productDetailsService) {
         this.productService = productService;
+        this.productDetailsService = productDetailsService;
     }
 
     @GetMapping()
@@ -32,6 +37,11 @@ public class ProductController {
     @GetMapping("/page")
     public ResponseEntity<Page<ProductDTO>> getProductsByPage(Pageable pageable) {
         return ResponseEntity.ok(productService.getProductsByPage(pageable));
+    }
+
+    @GetMapping("details/{id}")
+    public ResponseEntity<ProductDetailsDTO> getProductDetailById(@PathVariable Long id) {
+        return ResponseEntity.ok(productDetailsService.getProductById(id));
     }
 
     @GetMapping("/{id}")
@@ -52,10 +62,21 @@ public class ProductController {
         }catch (ImageProcessingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
-        } catch (RuntimeException e) {
+        } catch (ProductNotProcessedException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
 
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.deleteProduct(id));
+    }
+
+    @DeleteMapping("details/{id}")
+    public ResponseEntity<ProductDetailsDTO> deleteProductDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(productDetailsService.deleteProductDetail(id));
+    }
+
 }

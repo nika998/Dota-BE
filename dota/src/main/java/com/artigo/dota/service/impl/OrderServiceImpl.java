@@ -4,6 +4,7 @@ import com.artigo.dota.dto.OrderDTO;
 import com.artigo.dota.dto.OrderItemDTO;
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
+import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
@@ -41,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException {
+    public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException, MailNotSentException {
 
         var itemsRecentlyNotAvailable  = checkOrder(orderDTO.getOrderItems());
         if(!itemsRecentlyNotAvailable.isEmpty()) {

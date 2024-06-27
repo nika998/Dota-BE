@@ -4,6 +4,7 @@ CREATE TABLE product (
     price DECIMAL(10, 2),
     type VARCHAR(255),
     size VARCHAR(255),
+    new_collection BOOLEAN DEFAULT FALSE,
     deleted BOOLEAN DEFAULT FALSE
 );
 
@@ -27,8 +28,8 @@ CREATE TABLE product_image (
 );
 
 -- Insert data into the 'product' table
-INSERT INTO product (id, name, price, type, size, deleted) VALUES
-(6, 'Leather bag', 350, 'torbica', '20 x 16cm', FALSE);
+INSERT INTO product (id, name, price, type, size, new_collection, deleted) VALUES
+(6, 'Leather bag', 350, 'torbica', '20 x 16cm', FALSE, FALSE);
 
 -- Insert data into the 'product_details' table for the 'white' color
 INSERT INTO product_details (id, color, quantity, info, deleted, product_id) VALUES

@@ -25,6 +25,9 @@ public class ProductSubmitDTO {
 
     private String size;
 
+    @NotNull(message = "isNewCollection is required")
+    private Boolean isNewCollection;
+
     @Valid
     @NotNull(message = "Product details are required")
     private List<ProductDetailsSubmitDTO> productDetails;

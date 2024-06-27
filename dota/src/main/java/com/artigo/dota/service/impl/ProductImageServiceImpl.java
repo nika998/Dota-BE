@@ -83,6 +83,17 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
+    @Transactional
+    public List<ProductImageDO> deleteProductImagesList(List<ProductImageDO> images) {
+        List<ProductImageDO> deletedProductImages = new ArrayList<>();
+        images.forEach(productImageDO -> {
+            productImageDO.setIsDeleted(Boolean.TRUE);
+            deletedProductImages.add(productImageDO);
+        });
+        return deletedProductImages;
+    }
+
+    @Override
     public byte[] getProductImage(Long productImageId) {
 //        ProductImageDO foundProductImageDO = productImageRepository.getReferenceById(productImageId);
 //        if(foundProductImageDO == null){
@@ -102,9 +113,9 @@ public class ProductImageServiceImpl implements ProductImageService {
         if(images != null) {
             for (ProductImageDTO productImageDTO : images) {
                 name = name.replace(" ", "_");
-                color = color.substring(1);
+                String colorName = color.substring(1);
                 String imageUrl =
-                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + color + "/" + UUID.randomUUID();
+                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + colorName + "/" + UUID.randomUUID();
                 String uploadedImageUrl = this.uploadProductImage(imageUrl, productImageDTO.getFile());
                 if(uploadedImageUrl != null) {
                     ProductImageUrlDTO convertedProductImageUrlDTO =
