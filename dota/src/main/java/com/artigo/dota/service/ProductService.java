@@ -1,6 +1,7 @@
 package com.artigo.dota.service;
 
 import com.artigo.dota.dto.ProductDTO;
+import com.artigo.dota.dto.ProductDetailsDTO;
 import com.artigo.dota.dto.ProductDetailsSubmitDTO;
 import com.artigo.dota.dto.ProductSubmitDTO;
 import com.artigo.dota.entity.ProductDetailsDO;
@@ -22,4 +23,7 @@ public interface ProductService {
     ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException;
 
     ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException;
+
+    ProductDTO deleteProduct(Long id);
+
 }

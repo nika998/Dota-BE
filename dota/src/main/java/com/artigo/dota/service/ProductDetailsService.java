@@ -20,4 +20,8 @@ public interface ProductDetailsService {
     ProductDetailsDO saveProductDetails(ProductDetailsDTO productDetailsDTO, List<ProductImageUrlDTO> uploadedImagesDTO);
 
     ProductDetailsDTO getProductById(Long id);
+
+    List<ProductDetailsDO> deleteProductDetailsList(List<ProductDetailsDO> productDetails);
+
+    ProductDetailsDTO deleteProductDetail(Long id);
 }

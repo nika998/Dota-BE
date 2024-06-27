@@ -79,6 +79,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    public ProductDTO deleteProduct(Long id) {
+        ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
+        productDetailsService.deleteProductDetailsList(product.getProductDetails());
+        product.setIsDeleted(Boolean.TRUE);
+        ProductDO deletedProduct = productRepository.save(product);
+
+        ProductDTO deletedProductDTO = productMapper.entityToDto(deletedProduct);
+        List<ProductImageUrlDTO> imagesToDelete = new ArrayList<>();
+        deletedProductDTO.getProductDetails().forEach(productDetailsDTO -> {
+            imagesToDelete.addAll(productDetailsDTO.getImages());
+        });
+        productImageService.deleteUploadedImages(imagesToDelete);
+
+        return deletedProductDTO;
+    }
+
+    @Override
+    @Transactional
     public ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         if(files.size() < productDetails.getImages().size()) {
             throw new ImageProcessingException("Image files do not match with ProductImageDTOs");
