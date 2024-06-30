@@ -113,9 +113,9 @@ public class ProductImageServiceImpl implements ProductImageService {
         if(images != null) {
             for (ProductImageDTO productImageDTO : images) {
                 name = name.replace(" ", "_");
-                String colorName = color.substring(1);
+                color = color.substring(1);
                 String imageUrl =
-                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + colorName + "/" + UUID.randomUUID();
+                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + color + "/" + UUID.randomUUID();
                 String uploadedImageUrl = this.uploadProductImage(imageUrl, productImageDTO.getFile());
                 if(uploadedImageUrl != null) {
                     ProductImageUrlDTO convertedProductImageUrlDTO =
