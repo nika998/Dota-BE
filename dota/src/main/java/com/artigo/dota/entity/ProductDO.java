@@ -2,6 +2,7 @@ package com.artigo.dota.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
@@ -9,12 +10,9 @@ import java.util.List;
 
 @Entity(name = "product")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Where(clause = "deleted = false")
-public class ProductDO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ProductDO extends BaseEntity{
 
     @Column(name = "name")
     private String name;
@@ -30,9 +28,6 @@ public class ProductDO {
 
     @Column(name = "new_collection")
     private Boolean isNewCollection;
-
-    @Column(name = "deleted")
-    private Boolean isDeleted;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")

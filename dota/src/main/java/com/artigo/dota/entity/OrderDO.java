@@ -3,6 +3,7 @@ package com.artigo.dota.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
@@ -14,12 +15,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Where(clause = "deleted = false")
-public class OrderDO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OrderDO extends BaseEntity{
 
     @Column(name = "full_name")
     private String fullName;
@@ -42,9 +40,6 @@ public class OrderDO {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "deleted")
-    private Boolean isDeleted;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
