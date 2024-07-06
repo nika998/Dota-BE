@@ -17,6 +17,7 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,6 +42,9 @@ public class ProductImageServiceImpl implements ProductImageService {
     @Override
     public String uploadProductImage(String imageUrl, MultipartFile file) {
         String contentType = file.getContentType();
+        if(contentType == null) {
+            return null;
+        }
         String extension = contentType.equals("image/jpeg") ? "jpg" : "png";
 
         // Generate a unique key for the S3 object
@@ -95,16 +99,16 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public byte[] getProductImage(Long productImageId) {
-//        ProductImageDO foundProductImageDO = productImageRepository.getReferenceById(productImageId);
-//        if(foundProductImageDO == null){
-//            log.error("Product image with id " + productImageId + "not found");
-//            return null;
-//        }
-        return s3Service.getImage(
-                s3Bucket.getBucket(),
-                "images/torbica/republika-sumska/crna"
-//                foundProductImageDO.getImagePath()
-        );
+        Optional<ProductImageDO> foundProductImageDO = productImageRepository.findById(productImageId);
+        if(foundProductImageDO.isEmpty()){
+            log.error("Product image with id " + productImageId + "not found");
+            return new byte[0];
+        } else {
+            return s3Service.getImage(
+                    s3Bucket.getBucket(),
+                    foundProductImageDO.get().getImagePath()
+            );
+        }
     }
 
     @Override

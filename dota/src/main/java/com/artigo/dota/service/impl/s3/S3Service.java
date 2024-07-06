@@ -56,6 +56,7 @@ public class S3Service {
 
         try {
             s3Client.deleteObject(deleteObjectRequest);
+            log.info("Image deleted from s3 bucket");
             return true;
         } catch (NoSuchKeyException e) {
             log.error("No image with provided key inside s3 bucket " + key);
