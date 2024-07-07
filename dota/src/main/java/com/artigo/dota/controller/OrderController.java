@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -27,5 +26,10 @@ public class OrderController {
         } catch (MailNotSentException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
         }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteOrder(@RequestParam Long orderId) {
+        return ResponseEntity.status(HttpStatus.OK).body((OrderDTO) orderService.deleteOrder(orderId));
     }
 }

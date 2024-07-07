@@ -54,6 +54,9 @@ aws:
     image-url-prefix: ${AWS_IMAGE_URL}
     root-folder: 'images'
 
+origin:
+  allowed: ${ORIGIN_ALLOWED}
+
 excel:
   sheet:
     name: 'Orders'

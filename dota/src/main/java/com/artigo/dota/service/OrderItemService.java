@@ -9,4 +9,6 @@ public interface OrderItemService {
     List<OrderItemDO> saveAll(List<OrderItemDO> orderItemDOs);
 
     OrderDO getRelatedOrder(OrderItemDO orderItemDO);
+
+    List<OrderItemDO> deleteOrderItemsList(List<OrderItemDO> orderItems);
 }

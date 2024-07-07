@@ -8,6 +8,7 @@ import com.artigo.dota.service.OrderItemService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,5 +32,17 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderDO getRelatedOrder(OrderItemDO orderItemDO) {
         return orderRepository.findById(orderItemDO.getOrderId()).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public List<OrderItemDO> deleteOrderItemsList(List<OrderItemDO> orderItems) {
+        var deletedOrderItems = new ArrayList<OrderItemDO>();
+        orderItems.forEach(orderItemDO -> {
+
+            orderItemDO.setIsDeleted(Boolean.TRUE);
+            deletedOrderItems.add(orderItemDO);
+        });
+        return deletedOrderItems;
     }
 }
