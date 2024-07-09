@@ -6,6 +6,7 @@ import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface OrderService {
     ArrayList<OrderItemDTO> checkOrder(List<OrderItemDTO> orderItems);
 
     OrderDO saveOrder(OrderDTO orderDTO);
+
+    List<OrderDO> findOrdersByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate, boolean includeDeleted);
 
     OrderDTO deleteOrder(Long orderId);
 }

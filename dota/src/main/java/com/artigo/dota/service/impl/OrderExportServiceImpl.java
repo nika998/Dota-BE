@@ -2,11 +2,10 @@ package com.artigo.dota.service.impl;
 
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
-import com.artigo.dota.mapper.OrderMapper;
-import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.EmailService;
 import com.artigo.dota.service.OrderExportService;
+import com.artigo.dota.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,14 +21,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Slf4j
 public class OrderExportServiceImpl implements OrderExportService {
-    private final OrderRepository orderRepository;
+
+    private final OrderService orderService;
 
     private final ProductRepository productRepository;
 
@@ -38,8 +36,8 @@ public class OrderExportServiceImpl implements OrderExportService {
     @Value("${excel.sheet.name:Orders}")
     private String excelSheetName;
 
-    public OrderExportServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, EmailService emailService) {
-        this.orderRepository = orderRepository;
+    public OrderExportServiceImpl(OrderService orderService, ProductRepository productRepository, EmailService emailService) {
+        this.orderService = orderService;
         this.productRepository = productRepository;
         this.emailService = emailService;
     }
@@ -50,7 +48,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
         LocalDateTime endDate = LocalDateTime.now();
 
-        List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
+        List<OrderDO> orders = orderService.findOrdersByCreatedAtBetween(startDate, endDate, true);
 
         try {
             generateExcelFile(orders,true);
@@ -66,7 +64,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
-        List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
+        List<OrderDO> orders = orderService.findOrdersByCreatedAtBetween(startDate, endDate, true);
 
         try {
             generateExcelFile(orders,false);

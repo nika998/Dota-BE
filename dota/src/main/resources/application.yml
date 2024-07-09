@@ -33,6 +33,9 @@ server:
   servlet:
     context-path: /dota
 
+custom:
+  token: ${CUSTOM_TOKEN}
+
 mail:
   recipients:
     - ${MAIL_USERNAME}

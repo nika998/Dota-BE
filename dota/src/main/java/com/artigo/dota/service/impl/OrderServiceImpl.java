@@ -11,6 +11,9 @@ import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
+import jakarta.persistence.EntityManager;
+import org.hibernate.Filter;
+import org.hibernate.Session;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,14 @@ import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final String PRODUCT_DETAIL_FILTER = "deletedProductFilter";
+
+    private static final String PRODUCT_IMAGE_FILTER = "deletedImageFilter";
+
+    private static final String DELETED_PARAM = "isDeleted";
+
+    private final EntityManager entityManager;
 
     private final OrderRepository orderRepository;
 
@@ -33,7 +44,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderItemMapper orderItemMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, EmailService emailService, OrderMapper orderMapper, OrderItemMapper orderItemMapper, OrderItemService orderItemService, ProductDetailsService productDetailsService) {
+    public OrderServiceImpl(EntityManager entityManager, OrderRepository orderRepository, EmailService emailService, OrderMapper orderMapper, OrderItemMapper orderItemMapper, OrderItemService orderItemService, ProductDetailsService productDetailsService) {
+        this.entityManager = entityManager;
         this.orderRepository = orderRepository;
         this.emailService = emailService;
         this.orderMapper = orderMapper;
@@ -97,10 +109,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDO> findOrdersByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate, boolean includeDeleted) {
+        Session session = entityManager.unwrap(Session.class);
+        Filter productFilter  = session.enableFilter(PRODUCT_DETAIL_FILTER);
+        Filter imageFilter = session.enableFilter(PRODUCT_IMAGE_FILTER);
+
+        if (includeDeleted) {
+            productFilter .setParameter(DELETED_PARAM, true);
+            imageFilter.setParameter(DELETED_PARAM, true);
+        } else {
+            productFilter.setParameter(DELETED_PARAM, false);
+            imageFilter.setParameter(DELETED_PARAM, false);
+        }
+
+        List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
+
+        if (includeDeleted) {
+            session.disableFilter(PRODUCT_DETAIL_FILTER);
+            session.disableFilter(PRODUCT_IMAGE_FILTER);
+        }
+        return orders;
+    }
+
+    @Override
     @Transactional
     @CacheEvict(value = {"products", "product"}, allEntries = true)
     public OrderDTO deleteOrder(Long orderId) {
-        var orderToDelete = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order with provided id not found"));
+        var orderToDelete = findOrderToDeleteById(orderId, true).orElseThrow(() -> new EntityNotFoundException("Order with provided id not found"));
         var orderItemsToDelete = orderItemService.deleteOrderItemsList(orderToDelete.getOrderItems());
         orderToDelete.setIsDeleted(Boolean.TRUE);
         orderItemsToDelete.forEach(orderItemDO ->
@@ -110,6 +145,28 @@ public class OrderServiceImpl implements OrderService {
 
         var deletedOrder = orderRepository.save(orderToDelete);
         return orderMapper.entityToDto(deletedOrder);
+    }
+
+    public Optional<OrderDO> findOrderToDeleteById(Long orderId, boolean includeDeleted) {
+        Session session = entityManager.unwrap(Session.class);
+        Filter productFilter  = session.enableFilter(PRODUCT_DETAIL_FILTER);
+        Filter imageFilter = session.enableFilter(PRODUCT_IMAGE_FILTER);
+
+        if (includeDeleted) {
+            productFilter .setParameter(DELETED_PARAM, true);
+            imageFilter.setParameter(DELETED_PARAM, true);
+        } else {
+            productFilter.setParameter(DELETED_PARAM, false);
+            imageFilter.setParameter(DELETED_PARAM, false);
+        }
+
+        Optional<OrderDO> orderToDelete = orderRepository.findById(orderId);
+
+        if (includeDeleted) {
+            session.disableFilter(PRODUCT_DETAIL_FILTER);
+            session.disableFilter(PRODUCT_IMAGE_FILTER);
+        }
+        return orderToDelete;
     }
 
 }

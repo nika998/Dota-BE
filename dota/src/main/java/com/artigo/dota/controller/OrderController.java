@@ -30,6 +30,6 @@ public class OrderController {
 
     @DeleteMapping
     public ResponseEntity<?> deleteOrder(@RequestParam Long orderId) {
-        return ResponseEntity.status(HttpStatus.OK).body((OrderDTO) orderService.deleteOrder(orderId));
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.deleteOrder(orderId));
     }
 }
