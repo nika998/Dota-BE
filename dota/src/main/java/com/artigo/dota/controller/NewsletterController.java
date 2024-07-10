@@ -5,9 +5,11 @@ import com.artigo.dota.service.NewsletterService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping(value = "/newsletter")
 public class NewsletterController {
 
@@ -18,7 +20,14 @@ public class NewsletterController {
     }
 
     @PostMapping
-    public ResponseEntity<?> processNewsletter(@RequestBody@Valid NewsletterDTO newsletterDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(newsletterService.processNewsletter(newsletterDTO));
+    public ResponseEntity<NewsletterDTO> processNewsletter(@RequestBody@Valid NewsletterDTO newsletterDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(newsletterService.processNewsletter(newsletterDTO));
+    }
+
+    @GetMapping(value = "/unsubscribe/{uuid}")
+    public String unsubscribeNewsletter(@PathVariable String uuid, Model model) {
+        String message = newsletterService.logicalDeleteNewsletter(uuid);
+        model.addAttribute("message", message);
+        return "unsubscribeMessageTemplate";
     }
 }

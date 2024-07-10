@@ -3,9 +3,6 @@ package com.artigo.dota.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Where;
 
 import java.util.List;
@@ -13,8 +10,6 @@ import java.util.List;
 @Entity(name = "product_details")
 @Data
 @EqualsAndHashCode(callSuper = true)
-@FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedProductFilter", condition = "deleted = :isDeleted")
 public class ProductDetailsDO extends BaseEntity{
 
     @Column(name = "color")
@@ -31,5 +26,6 @@ public class ProductDetailsDO extends BaseEntity{
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_detail_id")
+    @Where(clause = "deleted = false")
     private List<ProductImageDO> images;
 }

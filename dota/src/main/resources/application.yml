@@ -49,6 +49,10 @@ mail:
     subject: 'New message from contact form'
   newsletter:
     subject: 'Newsletter subscriptions made in past 24h'
+    conformation:
+      subject: 'Subscription Confirmation'
+    unsubscribe:
+      subject: 'Unsubscribe Confirmation'
 
 aws:
   region: ${AWS_REGION}
@@ -57,6 +61,13 @@ aws:
     image-url-prefix: ${AWS_IMAGE_URL}
     root-folder: 'images'
 
+app:
+  protocol: ${PROTOCOL}
+  host: ${HOST}
+  base-url: '${app.protocol}://${app.host}:${server.port}'
+  newsletter:
+    unsubscribe-path: '/dota/newsletter/unsubscribe'
+
 origin:
   allowed: ${ORIGIN_ALLOWED}
 
@@ -64,3 +75,7 @@ excel:
   sheet:
     name: 'Orders'
 
+newsletter:
+  unsubscribe:
+    successful: 'You unsubscribed successfully.'
+    unsuccessful: 'Your unsubscribe request was not executed successfully.'

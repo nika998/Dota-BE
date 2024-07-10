@@ -26,7 +26,7 @@ public abstract class OrderItemMapper {
     }
 
     protected ProductDetailsDO getProductDetails(Long productDetailsId) {
-        return productDetailsRepository.findById(productDetailsId)
+        return productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId)
                 .orElseThrow(() -> new RuntimeException("ProductDetailsDO not found for id: " + productDetailsId));
     }
 }

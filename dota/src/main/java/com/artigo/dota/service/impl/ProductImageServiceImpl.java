@@ -81,7 +81,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public byte[] getProductImage(Long productImageId) {
-        Optional<ProductImageDO> foundProductImageDO = productImageRepository.findById(productImageId);
+        Optional<ProductImageDO> foundProductImageDO = productImageRepository.findByIdAndIsDeletedFalse(productImageId);
         if(foundProductImageDO.isEmpty()){
             log.error("Product image with id " + productImageId + "not found");
             return new byte[0];

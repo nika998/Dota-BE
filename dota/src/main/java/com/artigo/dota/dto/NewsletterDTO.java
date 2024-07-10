@@ -1,5 +1,6 @@
 package com.artigo.dota.dto;
 
+import com.artigo.dota.dto.enums.NewsletterStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -16,5 +17,7 @@ public class NewsletterDTO {
     private String email;
 
     private LocalDateTime createdAt;
+
+    private NewsletterStatus status;
 
 }

@@ -12,6 +12,7 @@ import com.artigo.dota.repository.ProductDetailsRepository;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.ProductDetailsService;
 import com.artigo.dota.service.ProductImageService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +42,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     public ProductDetailsDTO getProductById(Long id) {
-        var productDetailsDO = productDetailsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
+        var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
         return productDetailsMapper.entityToDto(productDetailsDO);
     }
 
@@ -59,8 +60,9 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductDetailsDTO deleteProductDetail(Long id) {
-        ProductDetailsDO productDetails = productDetailsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
+        ProductDetailsDO productDetails = productDetailsRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
         productImageService.deleteProductImagesList(productDetails.getImages());
         productDetails.setIsDeleted(Boolean.TRUE);
         ProductDetailsDO deletedProductDetailsDO = productDetailsRepository.save(productDetails);
@@ -75,7 +77,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     @Override
     @Transactional
     public boolean reduceProductQuantity(long productDetailsId, int orderedQuantity) {
-        var productDetailsDO = productDetailsRepository.findById(productDetailsId);
+        var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId);
         if(productDetailsDO.isPresent() && productDetailsDO.get().getQuantity() >= orderedQuantity) {
             productDetailsDO.get().setQuantity(productDetailsDO.get().getQuantity() - orderedQuantity);
             return true;
@@ -85,7 +87,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     public boolean checkProductAvailability(long productDetailsId, int orderedQuantity) {
-        var productDetailsDO = productDetailsRepository.findById(productDetailsId);
+        var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId);
         return (productDetailsDO.isPresent() && productDetailsDO.get().getQuantity() >= orderedQuantity);
     }
 

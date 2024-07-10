@@ -6,5 +6,7 @@ public interface NewsletterService {
 
     NewsletterDTO processNewsletter(NewsletterDTO newsletterDTO);
 
+    String logicalDeleteNewsletter(String uuid);
+
     void exportAllSubsMadeToday();
 }

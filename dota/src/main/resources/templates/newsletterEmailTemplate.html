@@ -53,6 +53,20 @@
             <p>No new newsletter subscriptions were made in the past 24 hours.</p>
         </th:block>
     </div>
+    <div class="content">
+        <h1>Odjavljeni korisnici za newsletter</h1>
+        <th:block th:if="${not #lists.isEmpty(unsubscribedEmails)}">
+            <p>Ispod se nalazi lista svih korisnika koji su se odjavili u zadnjih 24h:</p>
+            <ul>
+                <th:block th:each="email : ${unsubscribedEmails}">
+                    <li th:utext="${email}"></li>
+                </th:block>
+            </ul>
+        </th:block>
+        <th:block th:if="${#lists.isEmpty(unsubscribedEmails)}">
+            <p>No new newsletter subscriptions were made in the past 24 hours.</p>
+        </th:block>
+    </div>
     <img src="https://dotabags.s3.eu-central-1.amazonaws.com/images/logo/footer-logo.png" alt="Logo">
 </div>
 </body>

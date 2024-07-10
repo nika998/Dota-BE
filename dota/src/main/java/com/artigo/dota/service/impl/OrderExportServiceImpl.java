@@ -2,10 +2,10 @@ package com.artigo.dota.service.impl;
 
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
+import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.EmailService;
 import com.artigo.dota.service.OrderExportService;
-import com.artigo.dota.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class OrderExportServiceImpl implements OrderExportService {
 
-    private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     private final ProductRepository productRepository;
 
@@ -36,8 +36,8 @@ public class OrderExportServiceImpl implements OrderExportService {
     @Value("${excel.sheet.name:Orders}")
     private String excelSheetName;
 
-    public OrderExportServiceImpl(OrderService orderService, ProductRepository productRepository, EmailService emailService) {
-        this.orderService = orderService;
+    public OrderExportServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, EmailService emailService) {
+        this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.emailService = emailService;
     }
@@ -48,7 +48,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
         LocalDateTime endDate = LocalDateTime.now();
 
-        List<OrderDO> orders = orderService.findOrdersByCreatedAtBetween(startDate, endDate, true);
+        List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
 
         try {
             generateExcelFile(orders,true);
@@ -64,7 +64,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
-        List<OrderDO> orders = orderService.findOrdersByCreatedAtBetween(startDate, endDate, true);
+        List<OrderDO> orders = orderRepository.findByCreatedAtBetween(startDate, endDate);
 
         try {
             generateExcelFile(orders,false);

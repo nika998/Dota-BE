@@ -31,6 +31,7 @@ public class ProductDO extends BaseEntity{
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
+    @Where(clause = "deleted = false")
     private List<ProductDetailsDO> productDetails;
 
 }
