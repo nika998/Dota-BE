@@ -28,6 +28,51 @@ This project is a web shop application developed using Spring Boot. It provides 
 - **Apache POI** for handling Microsoft Excel files
 - **Caffeine** for caching
 
+### **Setup:**
+
+#### **Environment Variables:**
+- Sensitive environment variables are stored in `.env` files, which are not included in the repository. These files must be created and configured before running the application.
+  - **`.env_mysql`:** Contains MySQL-specific variables.
+    - `MYSQL_ROOT_PASSWORD`
+    - `MYSQL_DATABASE`
+    - `MYSQL_USER`
+    - `MYSQL_PASSWORD`
+  - **`.env_dota`:** Contains application-specific variables.
+    - `DB_URL`
+    - `DB_NAME`
+    - `DB_USERNAME`
+    - `DB_PASSWORD`
+    - `MAIL_USERNAME`
+    - `MAIL_PASSWORD`
+    - `CUSTOM_TOKEN`
+    - `AWS_ACCESS_KEY_ID`
+    - `AWS_SECRET_ACCESS_KEY`
+    - `AWS_REGION`
+    - `AWS_BUCKET_NAME`
+    - `AWS_IMAGE_URL`
+    - `PROTOCOL`
+    - `HOST`
+    - `PORT`
+    - `ORIGIN_ALLOWED`
+
+#### **Docker Setup:**
+- The application is Dockerized and can be run together with a MySQL database using a `docker-compose.yml` file.
+- The `Dockerfile` is based on `openjdk:17-jdk-alpine` and builds the application from the `dota-0.0.1-SNAPSHOT.jar`.
+- The MySQL service uses the `mysql:8.0` image and is configured with environment variables from `.env_mysql`.
+- The application service uses environment variables from `.env_dota` to configure the database connection, email settings, AWS S3, and other custom settings.
+
+#### **Steps to Run the Application:**
+1. **Prepare Environment Files:**
+   - Create `.env_mysql` and `.env_dota` files in the `docker` directory.
+   - Populate these files with the necessary environment variables.
+
+2. **Build and Run with Docker Compose:**
+   - Navigate to the project root directory.
+   - Run `docker-compose up --build` to build and start the application and MySQL services.
+
+3. **Access the Application:**
+   - The application will be accessible at `http://localhost:8080/dota` (or another port if specified in the `.env_dota` file).
+
 ## REST API Endpoints
 
 ### Products
@@ -47,38 +92,3 @@ This project is a web shop application developed using Spring Boot. It provides 
 
 ### Contact Form
 - `POST /contact` - Send a message through the contact form
-
-### **Application Overview:**
-
-#### **Docker Setup**
-- The application includes a `Dockerfile` and can be run alongside a MySQL database using a `docker-compose.yml` file.
-- The Dockerfile is based on `openjdk:17-jdk-alpine`.
-- The database service uses `mysql:8.0` image.
-
-#### **Application Configuration (`application.yml`):**
-- **Database Configuration:**
-  - Uses MySQL with environment variables for `DB_URL`, `DB_NAME`, `DB_USERNAME`, and `DB_PASSWORD`.
-  - Caching is enabled with Caffeine.
-
-- **Email Configuration:**
-  - Configured for Gmail SMTP with STARTTLS enabled.
-  - Custom mail subjects for order notifications, contact form messages, and newsletter operations.
-
-- **Server Configuration:**
-  - Runs on a port defined by the `PORT` environment variable (default 8080).
-  - The context path is set to `/dota`.
-
-- **AWS S3 Configuration:**
-  - Stores images in a bucket defined by `AWS_BUCKET_NAME`.
-
-#### **Environment Variables:**
-- Environment variables such as database credentials and email settings are stored in `.env` files that are not included in the repository to protect sensitive data.
-
-#### **Docker Compose Setup:**
-- Defines services for MySQL and the application:
-  - **MySQL Service:**
-    - Exposes port 3306 and includes a health check.
-    - Data is persisted using Docker volumes.
-  - **Application Service:**
-    - Exposes port 8080 and depends on the MySQL service being healthy.
-    - Uses environment variables from `.env_dota`.
