@@ -14,6 +14,8 @@ import com.artigo.dota.service.ProductDetailsService;
 import com.artigo.dota.service.ProductImageService;
 import com.artigo.dota.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,12 +53,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "#pageable.pageNumber")
     public Page<ProductDTO> getProductsByPage(Pageable pageable) {
         Page<ProductDO> productPage = productRepository.findAll(pageable);
         return productPage.map(productMapper::entityToDto);
     }
 
     @Override
+    @Cacheable(value = "product", key = "#id")
     public ProductDTO getProductById(Long id) {
         ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
         return productMapper.entityToDto(product);
@@ -64,6 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         var productDetailsSubmitDTOs = product.getProductDetails();
         product.setProductDetails(null);
@@ -79,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductDTO deleteProduct(Long id) {
         ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
         productDetailsService.deleteProductDetailsList(product.getProductDetails());
@@ -87,9 +93,9 @@ public class ProductServiceImpl implements ProductService {
 
         ProductDTO deletedProductDTO = productMapper.entityToDto(deletedProduct);
         List<ProductImageUrlDTO> imagesToDelete = new ArrayList<>();
-        deletedProductDTO.getProductDetails().forEach(productDetailsDTO -> {
-            imagesToDelete.addAll(productDetailsDTO.getImages());
-        });
+        deletedProductDTO.getProductDetails().forEach(productDetailsDTO ->
+            imagesToDelete.addAll(productDetailsDTO.getImages())
+        );
         productImageService.deleteUploadedImages(imagesToDelete);
 
         return deletedProductDTO;
@@ -104,8 +110,9 @@ public class ProductServiceImpl implements ProductService {
 
         for (MultipartFile file : files) {
             // Get the productId associated with the file
-            if(file.getOriginalFilename() != null && file.getOriginalFilename().contains(".")) {
-                String[] parts = file.getOriginalFilename().split("\\.");
+            String originalFilename = file.getOriginalFilename();
+            if(originalFilename != null && originalFilename.contains(".")) {
+                String[] parts = originalFilename.split("\\.");
                 Long productId = Long.parseLong(parts[0]);
 
                 // Find the corresponding ProductImageDTO using the productId

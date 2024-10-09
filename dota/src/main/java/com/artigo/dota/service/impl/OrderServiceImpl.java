@@ -4,12 +4,15 @@ import com.artigo.dota.dto.OrderDTO;
 import com.artigo.dota.dto.OrderItemDTO;
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
+import com.artigo.dota.exception.EntityNotFoundException;
 import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
+import jakarta.persistence.EntityManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException, MailNotSentException {
 
         var itemsRecentlyNotAvailable  = checkOrder(orderDTO.getOrderItems());
@@ -83,9 +87,29 @@ public class OrderServiceImpl implements OrderService {
 
         OrderDO savedOrder = orderRepository.save(orderDO);
 
-        savedOrder.setOrderItems(orderItemService.saveAll(orderItemDOs.stream().peek(orderItemDO -> orderItemDO.setOrderId(savedOrder.getId())).toList()));
+        orderItemDOs.forEach(orderItemDO -> orderItemDO.setOrderId(savedOrder.getId()));
+        savedOrder.setOrderItems(orderItemService.saveAll(orderItemDOs));
+
+        savedOrder.getOrderItems().forEach(orderItemDO ->
+            productDetailsService.reduceProductQuantity(orderItemDO.getProductDetails().getId(), orderItemDO.getQuantity())
+        );
 
         return savedOrder;
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
+    public OrderDTO deleteOrder(Long orderId) {
+        var orderToDelete = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order with provided id not found"));
+        var orderItemsToDelete = orderItemService.deleteOrderItemsList(orderToDelete.getOrderItems());
+        orderToDelete.setIsDeleted(Boolean.TRUE);
+        orderItemsToDelete.forEach(orderItemDO ->
+            orderItemDO.getProductDetails().setQuantity(orderItemDO.getProductDetails().getQuantity() + orderItemDO.getQuantity())
+        );
+
+        var deletedOrder = orderRepository.save(orderToDelete);
+        return orderMapper.entityToDto(deletedOrder);
     }
 
 }

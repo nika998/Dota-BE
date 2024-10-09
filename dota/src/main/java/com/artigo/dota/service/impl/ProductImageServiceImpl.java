@@ -1,22 +1,21 @@
 package com.artigo.dota.service.impl;
 
-import com.artigo.dota.configuration.S3BucketProperties;
 import com.artigo.dota.dto.ProductImageDTO;
 import com.artigo.dota.dto.ProductImageUrlDTO;
 import com.artigo.dota.entity.ProductImageDO;
 import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.repository.ProductImageRepository;
+import com.artigo.dota.service.ImageService;
 import com.artigo.dota.service.ProductImageService;
-import com.artigo.dota.service.impl.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.exception.SdkClientException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,37 +26,27 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     private final ProductImageMapper productImageMapper;
 
-    private final S3Service s3Service;
+    private final ImageService imageService;
 
-    private final S3BucketProperties s3Bucket;
-
-    public ProductImageServiceImpl(S3Service s3Service, ProductImageRepository productImageRepository, S3BucketProperties s3Bucket, ProductImageMapper productImageMapper) {
-        this.s3Service = s3Service;
+    public ProductImageServiceImpl(ProductImageRepository productImageRepository, ProductImageMapper productImageMapper, ImageService imageService) {
         this.productImageRepository = productImageRepository;
-        this.s3Bucket = s3Bucket;
         this.productImageMapper = productImageMapper;
+        this.imageService = imageService;
     }
 
     @Override
     public String uploadProductImage(String imageUrl, MultipartFile file) {
         String contentType = file.getContentType();
+        if(contentType == null) {
+            return null;
+        }
         String extension = contentType.equals("image/jpeg") ? "jpg" : "png";
 
         // Generate a unique key for the S3 object
         String key = imageUrl + "." + extension;
 
         try {
-            s3Service.saveImageFile(
-                    s3Bucket.getBucket(),
-                    key,
-                    file.getBytes()
-            );
-
-            return key;
-        } catch (SdkClientException e) {
-            log.error("Cannot save image inside s3 bucket");
-            e.printStackTrace();
-
+            return imageService.saveImage(key, file.getBytes());
         } catch (IOException e) {
             log.error("Cannot read image into byte array");
             e.printStackTrace();
@@ -67,17 +56,14 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public boolean deleteImage(String key) {
-        return s3Service.deleteImage(
-                s3Bucket.getBucket(),
-                key
-        );
+        return imageService.deleteImage(key);
     }
 
     @Override
     public void deleteUploadedImages(List<ProductImageUrlDTO> uploadedImagesDTO) {
         for(ProductImageUrlDTO productImageUrlDTO : uploadedImagesDTO) {
             String imageS3Url = productImageUrlDTO.getImagePath();
-            String key = imageS3Url.substring(s3Bucket.getImageUrlPrefix().length() + 1);
+            String key = imageS3Url.substring(imageService.getImageUrlPrefix().length() + 1);
             this.deleteImage(key);
         }
     }
@@ -95,16 +81,13 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public byte[] getProductImage(Long productImageId) {
-//        ProductImageDO foundProductImageDO = productImageRepository.getReferenceById(productImageId);
-//        if(foundProductImageDO == null){
-//            log.error("Product image with id " + productImageId + "not found");
-//            return null;
-//        }
-        return s3Service.getImage(
-                s3Bucket.getBucket(),
-                "images/torbica/republika-sumska/crna"
-//                foundProductImageDO.getImagePath()
-        );
+        Optional<ProductImageDO> foundProductImageDO = productImageRepository.findByIdAndIsDeletedFalse(productImageId);
+        if(foundProductImageDO.isEmpty()){
+            log.error("Product image with id " + productImageId + "not found");
+            return new byte[0];
+        } else {
+            return imageService.getImage(foundProductImageDO.get().getImagePath());
+        }
     }
 
     @Override
@@ -112,14 +95,14 @@ public class ProductImageServiceImpl implements ProductImageService {
         List<ProductImageUrlDTO> uploadedProductImagesDTO = new ArrayList<>();
         if(images != null) {
             for (ProductImageDTO productImageDTO : images) {
-                name = name.replace(" ", "_");
-                color = color.substring(1);
+                String namePathValue = name.replace(" ", "_");
+                String colorPathValue = color.substring(1);
                 String imageUrl =
-                        s3Bucket.getRootFolder() + "/" + type + "/" + name + "/"  + color + "/" + UUID.randomUUID();
+                        imageService.getRootFolder() + "/" + type + "/" + namePathValue + "/"  + colorPathValue + "/" + UUID.randomUUID();
                 String uploadedImageUrl = this.uploadProductImage(imageUrl, productImageDTO.getFile());
                 if(uploadedImageUrl != null) {
                     ProductImageUrlDTO convertedProductImageUrlDTO =
-                            productImageMapper.dtoToUrlDto(productImageDTO, s3Bucket.getImageUrlPrefix() + "/" + uploadedImageUrl);
+                            productImageMapper.dtoToUrlDto(productImageDTO, imageService.getImageUrlPrefix() + "/" + uploadedImageUrl);
                     uploadedProductImagesDTO.add(convertedProductImageUrlDTO);
                 } else {
                     return uploadedProductImagesDTO;

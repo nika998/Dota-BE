@@ -28,4 +28,10 @@ public class EmailProperties {
 
     @Value("${mail.newsletter.subject}")
     private String newsletterMailSubject;
+
+    @Value("${mail.newsletter.conformation.subject}")
+    private String newsletterConformationMailSubject;
+
+    @Value("${mail.newsletter.unsubscribe.subject}")
+    private String newsletterUnsubscribeSubject;
 }

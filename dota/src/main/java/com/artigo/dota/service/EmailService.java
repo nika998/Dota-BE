@@ -17,5 +17,9 @@ public interface EmailService {
 
     void sendContactMail(ContactFormDTO contactFormDTO) throws MailNotSentException;
 
-    void sendNewsletterMail(List<NewsletterDO> savedNewsletterDO);
+    void sendNewsletterMail(List<NewsletterDO> savedNewsletterDO, List<String> unsubscribedEmails);
+
+    void sendNewsletterConformationMail(NewsletterDO newsletterDO);
+
+    void sendNewsletterUnsubscribeMail(NewsletterDO deletedNewsLetter);
 }

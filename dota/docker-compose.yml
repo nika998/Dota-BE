@@ -5,15 +5,40 @@ services:
     image: mysql:8.0
     container_name: mysql_db
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: dota
-      MYSQL_USER: DOTA_BAGS
-      MYSQL_PASSWORD: DOTA_BAGS
+    env_file:
+      - docker/.env_mysql
     ports:
-      - "3306:3306"  # Expose MySQL port to host machine
+      - "3306:3306"
+    networks:
+      - dota-bags
     volumes:
-      - mysql_data:/var/lib/mysql  # Mount volume for database data persistence
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  dota:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dota
+    ports:
+      - "8080:8080"
+    networks:
+      - dota-bags
+    env_file:
+      - docker/.env_dota
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 volumes:
-  mysql_data:  # Define volume for MySQL data persistence
+  mysql_data:
+
+networks:
+  dota-bags:
+    driver: bridge

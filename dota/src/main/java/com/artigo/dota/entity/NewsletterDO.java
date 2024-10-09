@@ -2,8 +2,8 @@ package com.artigo.dota.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -11,18 +11,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Where(clause = "deleted = false")
-public class NewsletterDO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class NewsletterDO extends BaseEntity{
 
     private String email;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "deleted")
-    private Boolean isDeleted;
+    private String uuid;
+
 }

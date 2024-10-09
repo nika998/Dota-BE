@@ -16,4 +16,6 @@ public interface OrderService {
     ArrayList<OrderItemDTO> checkOrder(List<OrderItemDTO> orderItems);
 
     OrderDO saveOrder(OrderDTO orderDTO);
+
+    OrderDTO deleteOrder(Long orderId);
 }

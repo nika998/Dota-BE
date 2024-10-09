@@ -2,16 +2,14 @@ package com.artigo.dota.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Where;
 
 @Entity(name = "order_item")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Where(clause = "deleted = false")
-public class OrderItemDO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class OrderItemDO extends BaseEntity{
 
     @Column(name = "order_id", nullable = false)
     private Long orderId;
@@ -26,6 +24,4 @@ public class OrderItemDO {
     @Column(name = "available")
     private Boolean isAvailable;
 
-    @Column(name = "deleted")
-    private Boolean isDeleted;
 }

@@ -2,7 +2,6 @@ package com.artigo.dota.service.impl;
 
 import com.artigo.dota.entity.OrderDO;
 import com.artigo.dota.entity.OrderItemDO;
-import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.EmailService;
@@ -22,13 +21,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Slf4j
 public class OrderExportServiceImpl implements OrderExportService {
+
     private final OrderRepository orderRepository;
 
     private final ProductRepository productRepository;

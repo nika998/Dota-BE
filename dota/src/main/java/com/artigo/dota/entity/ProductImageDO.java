@@ -2,16 +2,12 @@ package com.artigo.dota.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Where;
+import lombok.EqualsAndHashCode;
 
 @Entity(name = "product_image")
 @Data
-@Where(clause = "deleted = false")
-public class ProductImageDO {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class ProductImageDO extends BaseEntity{
 
     @Column(name = "display")
     private Boolean isDisplay;
@@ -22,6 +18,4 @@ public class ProductImageDO {
     @Column(name = "product_detail_id", nullable = false)
     private Long productDetailId;
 
-    @Column(name = "deleted")
-    private Boolean isDeleted;
 }

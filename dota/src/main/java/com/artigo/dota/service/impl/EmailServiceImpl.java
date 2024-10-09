@@ -35,6 +35,12 @@ public class EmailServiceImpl implements EmailService {
 
     private final ProductRepository productRepository;
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
+    @Value("${app.newsletter.unsubscribe-path}")
+    private String unsubscribePath;
+
     public EmailServiceImpl(EmailProperties emailProperties, JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
         this.emailProperties = emailProperties;
         this.emailSender = emailSender;
@@ -170,7 +176,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendNewsletterMail(List<NewsletterDO> savedNewsletterDOs) {
+    public void sendNewsletterMail(List<NewsletterDO> savedNewsletterDOs, List<String> unsubscribedEmails) {
         List<String> recipientList = emailProperties.getRecipients();
 
         MimeMessage message = emailSender.createMimeMessage();
@@ -186,6 +192,7 @@ public class EmailServiceImpl implements EmailService {
             // Process the HTML template with Thymeleaf
             Context context = new Context();
             context.setVariable("newsletters", savedNewsletterDOs);
+            context.setVariable("unsubscribedEmails", unsubscribedEmails);
             String htmlContent = templateEngine.process("newsletterEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content
@@ -193,7 +200,67 @@ public class EmailServiceImpl implements EmailService {
             emailSender.send(message);
             log.info("Mail with newsletter subscriptions successfully sent");
         } catch (RuntimeException | MessagingException e) {
-            log.error("Could not send an email");
+            log.error("Could not send an email with newsletter subscriptions");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendNewsletterConformationMail(NewsletterDO newsletterDO) {
+        List<String> recipientList = new ArrayList<>();
+        recipientList.add(newsletterDO.getEmail());
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            for (String recipient:
+                    recipientList) {
+                helper.setTo(recipient);
+            }
+            helper.setSubject(emailProperties.getNewsletterConformationMailSubject());
+
+            // Process the HTML template with Thymeleaf
+            Context context = new Context();
+            context.setVariable("newsletter", newsletterDO);
+            context.setVariable("baseUrl", baseUrl);
+            context.setVariable("unsubscribePath", unsubscribePath);
+            String htmlContent = templateEngine.process("newsletterConformationEmailTemplate", context);
+
+            helper.setText(htmlContent, true); // Set the HTML content
+
+            emailSender.send(message);
+            log.info("Mail with newsletter conformation successfully sent");
+        } catch (RuntimeException | MessagingException e) {
+            log.error("Could not send an email with newsletter conformation");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendNewsletterUnsubscribeMail(NewsletterDO deletedNewsLetter) {
+        List<String> recipientList = new ArrayList<>();
+        recipientList.add(deletedNewsLetter.getEmail());
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            for (String recipient:
+                    recipientList) {
+                helper.setTo(recipient);
+            }
+            helper.setSubject(emailProperties.getNewsletterUnsubscribeSubject());
+
+            // Process the HTML template with Thymeleaf
+            Context context = new Context();
+            String htmlContent = templateEngine.process("newsletterUnsubscribeEmailTemplate", context);
+            helper.setText(htmlContent, true); // Set the HTML content
+
+            emailSender.send(message);
+            log.info("Mail for unsubscribed newsletter successfully sent");
+        } catch (RuntimeException | MessagingException e) {
+            log.error("Could not send an email for an unsubscribed newsletter");
             e.printStackTrace();
         }
     }
