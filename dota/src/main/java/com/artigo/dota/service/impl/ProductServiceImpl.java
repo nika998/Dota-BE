@@ -54,9 +54,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Cacheable(value = "products", key = "#pageable.pageNumber")
-    public Page<ProductDTO> getProductsByPage(Pageable pageable) {
+    public Page<ProductDTO> getProductsPageable(Pageable pageable) {
         Page<ProductDO> productPage = productRepository.findAll(pageable);
         return productPage.map(productMapper::entityToDto);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByType(String type) {
+        List<ProductDO> productsByType = productRepository.findByType(type);
+        return productsByType.stream().map(productMapper::entityToDto).toList();
+    }
+
+    @Override
+    public Page<ProductDTO> getProductsByTypePageable(Pageable pageable, String type) {
+        Page<ProductDO> productsByType = productRepository.findByType(type, pageable);
+        return productsByType.map(productMapper::entityToDto);
     }
 
     @Override

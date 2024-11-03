@@ -34,8 +34,18 @@ public class ProductController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<ProductDTO>> getProductsByPage(Pageable pageable) {
-        return ResponseEntity.ok(productService.getProductsByPage(pageable));
+    public ResponseEntity<Page<ProductDTO>> getProductsPageable(Pageable pageable) {
+        return ResponseEntity.ok(productService.getProductsPageable(pageable));
+    }
+
+    @GetMapping("type/{type}")
+    public ResponseEntity<List<ProductDTO>> getProductsByType(@PathVariable String type) {
+        return ResponseEntity.ok(productService.getProductsByType(type));
+    }
+
+    @GetMapping("type/{type}/page")
+    public ResponseEntity<Page<ProductDTO>> getProductsByTypePageable(Pageable pageable, @PathVariable String type) {
+        return ResponseEntity.ok(productService.getProductsByTypePageable(pageable, type));
     }
 
     @GetMapping("details/{id}")
