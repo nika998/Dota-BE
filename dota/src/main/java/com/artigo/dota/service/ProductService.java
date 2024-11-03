@@ -1,7 +1,6 @@
 package com.artigo.dota.service;
 
 import com.artigo.dota.dto.ProductDTO;
-import com.artigo.dota.dto.ProductDetailsDTO;
 import com.artigo.dota.dto.ProductDetailsSubmitDTO;
 import com.artigo.dota.dto.ProductSubmitDTO;
 import com.artigo.dota.entity.ProductDetailsDO;
@@ -16,7 +15,11 @@ import java.util.List;
 public interface ProductService {
     List<ProductDTO> getAllProducts();
 
-    Page<ProductDTO> getProductsByPage(Pageable pageable);
+    Page<ProductDTO> getProductsPageable(Pageable pageable);
+
+    List<ProductDTO> getProductsByType(String type);
+
+    Page<ProductDTO> getProductsByTypePageable(Pageable pageable, String type);
 
     ProductDTO getProductById(Long id);
 
@@ -25,5 +28,4 @@ public interface ProductService {
     ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException;
 
     ProductDTO deleteProduct(Long id);
-
 }

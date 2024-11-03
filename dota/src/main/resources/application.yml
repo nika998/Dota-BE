@@ -36,6 +36,17 @@ server:
 custom:
   token: ${CUSTOM_TOKEN}
 
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      enabled: true
+      show-details: never
+
 mail:
   recipients:
     - ${MAIL_USERNAME}

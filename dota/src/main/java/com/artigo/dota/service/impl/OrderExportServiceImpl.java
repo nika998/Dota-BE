@@ -58,7 +58,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 * * *")// Every first day of the month at 12 PM
+    @Scheduled(cron = "0 0 12 1 * *")// Every first day of the month at 12 PM
     public void exportMonthlyOrdersExcel() {
         log.info("Monthly orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
