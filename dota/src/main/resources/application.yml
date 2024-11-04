@@ -78,6 +78,8 @@ app:
   base-url: '${app.protocol}://${app.host}:${server.port}'
   newsletter:
     unsubscribe-path: '/dota/newsletter/unsubscribe'
+  health-check:
+    rate: ${HEALTH_CHECK_RATE}
 
 origin:
   allowed: ${ORIGIN_ALLOWED}
