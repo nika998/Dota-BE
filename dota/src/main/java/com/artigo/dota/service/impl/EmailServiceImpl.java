@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendOrderMail(OrderDO order, boolean client) throws MailNotSentException {
         List<String> recipientList = new ArrayList<>();
-        if(client) {
+        if (client) {
             recipientList.add(order.getEmail());
         } else {
             recipientList = emailProperties.getRecipients();
@@ -75,8 +75,8 @@ public class EmailServiceImpl implements EmailService {
         }
 
         try {
-            for (String recipient:
-                 recipientList) {
+            for (String recipient :
+                    recipientList) {
                 helper.setTo(recipient);
             }
             helper.setSubject(emailProperties.getOrderArrivedMailSubject());
@@ -106,16 +106,16 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage message = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true); // Enable multipart support
-            for (String recipient:
+            for (String recipient :
                     recipientList) {
                 helper.setTo(recipient);
             }
 
             // Process the Thymeleaf template
             String emailContent;
-            if(daily){
+            if (daily) {
                 helper.setSubject(emailProperties.getOrderExcelMailSubject());
-                if(!isExcelEmpty) {
+                if (!isExcelEmpty) {
                     emailContent = templateEngine.process("dailyOrdersEmailTemplate.html", new Context());
                 } else {
                     emailContent = templateEngine.process("noOrdersEmailTemplate.html", new Context());
@@ -132,7 +132,7 @@ public class EmailServiceImpl implements EmailService {
             // Set the email content
             helper.setText(emailContent, true);
             // Attach the Excel file
-            if(!isExcelEmpty) {
+            if (!isExcelEmpty) {
                 File file = new File(excelFilePath);
                 helper.addAttachment(file.getName(), file);
             }
@@ -154,7 +154,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            for (String recipient:
+            for (String recipient :
                     recipientList) {
                 helper.setTo(recipient);
             }
@@ -183,7 +183,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            for (String recipient:
+            for (String recipient :
                     recipientList) {
                 helper.setTo(recipient);
             }
@@ -214,7 +214,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            for (String recipient:
+            for (String recipient :
                     recipientList) {
                 helper.setTo(recipient);
             }
@@ -246,7 +246,7 @@ public class EmailServiceImpl implements EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            for (String recipient:
+            for (String recipient :
                     recipientList) {
                 helper.setTo(recipient);
             }
@@ -263,6 +263,45 @@ public class EmailServiceImpl implements EmailService {
             log.error("Could not send an email for an unsubscribed newsletter");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void sendSubReportExcelMail(String excelFilePath, boolean isExcelEmpty) {
+        List<String> recipientList = emailProperties.getRecipients();
+
+        MimeMessage message = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true); // Enable multipart support
+            for (String recipient :
+                    recipientList) {
+                helper.setTo(recipient);
+            }
+
+            // Process the Thymeleaf template
+            String emailContent;
+            helper.setSubject(emailProperties.getNewsletterExcelMailSubject());
+            if (!isExcelEmpty) {
+                emailContent = templateEngine.process("subReportEmailTemplate.html", new Context());
+            } else {
+                emailContent = templateEngine.process("noSubReportEmailTemplate.html", new Context());
+            }
+
+            // Set the email content
+            helper.setText(emailContent, true);
+            // Attach the Excel file
+            if (!isExcelEmpty) {
+                File file = new File(excelFilePath);
+                helper.addAttachment(file.getName(), file);
+            }
+
+            // Send the email
+            emailSender.send(message);
+            log.info("Mail with subscriptions report successfully sent");
+        } catch (RuntimeException | MessagingException e) {
+            log.error("Could not send an email");
+            e.printStackTrace();
+        }
+
     }
 
 }

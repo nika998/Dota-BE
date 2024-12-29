@@ -11,7 +11,6 @@ import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
-import jakarta.persistence.EntityManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

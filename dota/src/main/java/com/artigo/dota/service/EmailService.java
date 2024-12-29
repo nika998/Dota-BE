@@ -22,4 +22,6 @@ public interface EmailService {
     void sendNewsletterConformationMail(NewsletterDO newsletterDO);
 
     void sendNewsletterUnsubscribeMail(NewsletterDO deletedNewsLetter);
+
+    void sendSubReportExcelMail(String excelFilePath, boolean isExcelEmpty);
 }

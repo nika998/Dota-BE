@@ -46,7 +46,7 @@
         <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.name ?: 'Unknown')}"></span></td>
         <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.type ?: 'Unknown')}"></span></td>
         <td><span th:text="${#strings.escapeXml(item.quantity)}"></span></td>
-        <td><span th:text="${#strings.escapeXml(item.productDetails.color)}"></span></td>
+        <td><span th:text="${#strings.escapeXml(item.productDetails.info)}"></span></td>
         <td><span th:text="${item.isAvailable? 'Available' : 'Reserved'}"></span></td>
     </tr>
     </tbody>
