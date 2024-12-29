@@ -53,7 +53,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         try {
             generateExcelFile(orders,true);
         } catch (IOException e) {
-            log.error("Could not generate daily excel file");
+            log.error("Could not generate daily orders excel file");
             e.printStackTrace();
         }
     }
@@ -69,7 +69,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         try {
             generateExcelFile(orders,false);
         } catch (IOException e) {
-            log.error("Could not generate monthly excel file");
+            log.error("Could not generate monthly orders excel file");
             e.printStackTrace();
         }
     }

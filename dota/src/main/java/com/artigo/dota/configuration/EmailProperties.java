@@ -34,4 +34,7 @@ public class EmailProperties {
 
     @Value("${mail.newsletter.unsubscribe.subject}")
     private String newsletterUnsubscribeSubject;
+
+    @Value("${mail.newsletter.excel.subject}")
+    private String newsletterExcelMailSubject;
 }

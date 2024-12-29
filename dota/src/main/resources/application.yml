@@ -64,6 +64,8 @@ mail:
       subject: 'Subscription Confirmation'
     unsubscribe:
       subject: 'Unsubscribe Confirmation'
+    excel:
+      subject: 'All subscriptions made in a previous month'
 
 aws:
   region: ${AWS_REGION}

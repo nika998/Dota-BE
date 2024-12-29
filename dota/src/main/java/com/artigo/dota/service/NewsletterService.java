@@ -9,4 +9,6 @@ public interface NewsletterService {
     String logicalDeleteNewsletter(String uuid);
 
     void exportAllSubsMadeToday();
+
+    void exportMonthlyExcelReport();
 }
