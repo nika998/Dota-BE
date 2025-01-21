@@ -42,7 +42,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
+    @Scheduled(cron = "0 0 10 * * *")//Every day at 10AM
     public void exportDailyOrdersExcel() {
         log.info("Daily orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
@@ -58,7 +58,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         }
     }
 
-    @Scheduled(cron = "0 0 12 1 * *")// Every first day of the month at 12 PM
+    @Scheduled(cron = "0 0 10 1 * *")
     public void exportMonthlyOrdersExcel() {
         log.info("Monthly orders report exporting started: " + LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
@@ -90,9 +90,9 @@ public class OrderExportServiceImpl implements OrderExportService {
             }
 
             // Create temporary directory and file
-            String excelFileName = "daily_orders_data.xlsx";
+            String excelFileName = "porudzbine_dnevni_izvestaj.xlsx";
             if(!daily) {
-                excelFileName = "monthly_orders_data.xlsx";
+                excelFileName = "porudzbine_mesecni_izvestaj.xlsx";
             }
             Path tempDir = Files.createTempDirectory("excel_temp");
             String excelFilePath = tempDir.resolve(excelFileName).toString();
@@ -106,9 +106,9 @@ public class OrderExportServiceImpl implements OrderExportService {
     }
 
     private void createHeaderRow(Row headerRow) {
-        String[] headers = {"Order ID", "Full Name", "Email", "City", "Postal Code", "Address", "Flat Number",
-                "Phone", "Description", "Total Price", "Created At", "Delivery Type", "Product Name", "Product Type",
-                "Quantity", "Color"};
+        String[] headers = {"ID porudžbine", "Ime i prezime", "Email", "Grad", "Poštanski broj", "Adresa", "Broj stana",
+                "Telefon", "Opis", "Ukupna cena", "Datum kreiranja", "Tip dostave", "Dostupnsot", "Naziv prozivoda", "Tip proizvoda",
+                "Količina", "Boja"};
         int colNum = 0;
         for (String header : headers) {
             Cell cell = headerRow.createCell(colNum++);
@@ -132,10 +132,11 @@ public class OrderExportServiceImpl implements OrderExportService {
         row.createCell(colNum++).setCellValue(order.getDescription());
         row.createCell(colNum++).setCellValue(order.getTotalPrice().doubleValue());
         row.createCell(colNum++).setCellValue(order.getCreatedAt().toString());
-        row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(order.getWaitReserved())? "Wait for reserved items to be available" : "Deliver available items first");
-        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getName():"Unknown");
-        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getType():"Unknown");
+        row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(order.getWaitReserved())? "Sačekati rezervisane proizvode" : "Dostaviti dostupne proizvode prvo");
+        row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(orderItem.getIsAvailable())? "Dostupno" : "Rezervisano");
+        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getName():"Nepoznato");
+        row.createCell(colNum++).setCellValue(product.isPresent()?product.get().getType():"Nepoznato");
         row.createCell(colNum++).setCellValue(orderItem.getQuantity());
-        row.createCell(colNum).setCellValue(orderItem.getProductDetails().getColor());
+        row.createCell(colNum).setCellValue(orderItem.getProductDetails().getInfo());
     }
 }

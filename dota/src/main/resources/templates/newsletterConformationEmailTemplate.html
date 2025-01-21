@@ -1,15 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Newsletter Subscription Confirmation</title>
+    <meta charset="UTF-8">
+    <title>Potvrda prijave na newsletter</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 2em;
+            background-color: #f4f6f7;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
+        }
+        h1 {
+            color: #d97d0d;
+            text-transform: uppercase;
+            margin-bottom: 1.5em;
+        }
+        p {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 1em;
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+        img {
+            display: block;
+            margin: 2em auto;
+            width: 150px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-<p>Hello,</p>
-<p>Thank you for subscribing to our newsletter!</p>
-<p>You have successfully subscribed with the email: <strong th:text="${newsletter.email}"></strong></p>
-<p>If you wish to unsubscribe at any time, please click the link below:</p>
-<p><a th:href="${'https://dota-be.onrender.com' + unsubscribePath + '/' + newsletter.uuid}">Unsubscribe</a></p>
-<p>Best regards,</p>
-<p>Your Company</p>
+<div class="container">
+    <h1>Potvrda Prijave</h1>
+    <p>Zdravo,</p>
+    <p>Hvala vam što ste se prijavili na naš newsletter!</p>
+    <p>Uspešno ste se prijavili sa email adresom: <strong th:text="${newsletter.email}" style="color: #d97d0d; text-decoration: none !important;"></strong></p>
+    <p>Ako želite da se odjavite u bilo kom trenutku, kliknite na sledeći link:</p>
+    <p><a th:href="${baseUrl + unsubscribePath + '/' + newsletter.uuid}" style="color: #c97f30;">Odjavi se</a></p>
+    <p>Srdačan pozdrav,</p>
+    <p>Vaš Dota tim</p>
+    <img th:src="${logoUrl}" alt="Logo">
+</div>
 </body>
 </html>

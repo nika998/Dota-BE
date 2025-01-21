@@ -41,6 +41,12 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.newsletter.unsubscribe-path}")
     private String unsubscribePath;
 
+    @Value("${aws.image-url}${app.logo-path}")
+    private String logoUrl;
+
+    @Value("${app.fe-home-path}")
+    private String homePage;
+
     public EmailServiceImpl(EmailProperties emailProperties, JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
         this.emailProperties = emailProperties;
         this.emailSender = emailSender;
@@ -86,6 +92,7 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("client", client);
             context.setVariable("order", order);
             context.setVariable("productsFromOrder", productsFromOrder);
+            context.setVariable("logoUrl", logoUrl);
             String htmlContent = templateEngine.process("newOrderEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content
@@ -193,6 +200,7 @@ public class EmailServiceImpl implements EmailService {
             Context context = new Context();
             context.setVariable("newsletters", savedNewsletterDOs);
             context.setVariable("unsubscribedEmails", unsubscribedEmails);
+            context.setVariable("logoUrl", logoUrl);
             String htmlContent = templateEngine.process("newsletterEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content
@@ -225,6 +233,7 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("newsletter", newsletterDO);
             context.setVariable("baseUrl", baseUrl);
             context.setVariable("unsubscribePath", unsubscribePath);
+            context.setVariable("logoUrl", logoUrl);
             String htmlContent = templateEngine.process("newsletterConformationEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content
@@ -254,6 +263,8 @@ public class EmailServiceImpl implements EmailService {
 
             // Process the HTML template with Thymeleaf
             Context context = new Context();
+            context.setVariable("logoUrl", logoUrl);
+            context.setVariable("homePage", homePage);
             String htmlContent = templateEngine.process("newsletterUnsubscribeEmailTemplate", context);
             helper.setText(htmlContent, true); // Set the HTML content
 

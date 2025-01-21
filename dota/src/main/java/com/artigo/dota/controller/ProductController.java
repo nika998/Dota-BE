@@ -58,6 +58,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    @GetMapping("details/availability")
+    public ResponseEntity<List<ProductDetailQuantityDTO>> getProductDetailQuantities(@RequestParam List<Long> idList) {
+        return ResponseEntity.ok(productDetailsService.getProductDetailQuantities(idList));
+    }
+
     @PostMapping
     public ResponseEntity<?> saveProduct(
             @RequestPart("product")@Valid ProductSubmitDTO product,

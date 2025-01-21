@@ -50,7 +50,7 @@
             </ul>
         </th:block>
         <th:block th:if="${#lists.isEmpty(newsletters)}">
-            <p>No new newsletter subscriptions were made in the past 24 hours.</p>
+            <p>Nema novih korisnika koji su se pretplatili u prethodna 24 časa.</p>
         </th:block>
     </div>
     <div class="content">
@@ -64,10 +64,10 @@
             </ul>
         </th:block>
         <th:block th:if="${#lists.isEmpty(unsubscribedEmails)}">
-            <p>No new newsletter subscriptions were made in the past 24 hours.</p>
+            <p>Nema novih korisnika koji su se odjavili u prethodna 24 časa.</p>
         </th:block>
     </div>
-    <img src="https://dotabags.s3.eu-central-1.amazonaws.com/images/logo/footer-logo.png" alt="Logo">
+    <img th:src="${logoUrl}" alt="Logo">
 </div>
 </body>
 </html>

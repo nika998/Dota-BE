@@ -52,20 +52,20 @@ mail:
     - ${MAIL_USERNAME}
   order:
     arrived:
-      subject: 'New order'
+      subject: 'Nova porudžbina'
     excel:
-      daily-subject: 'All orders made in past 24h'
-      monthly-subject: 'All orders made in a previous month'
+      daily-subject: 'Dnevni izveštaj o napravljenim porudžbinama'
+      monthly-subject: 'Mesečni izveštaj o napravljenim porudžbinama'
   contact-form:
-    subject: 'New message from contact form'
+    subject: 'Poruka sa kontakt forme'
   newsletter:
-    subject: 'Newsletter subscriptions made in past 24h'
+    subject: 'Novi korisnici za newsletter'
     conformation:
-      subject: 'Subscription Confirmation'
+      subject: 'Potvrda prijave na newsletter'
     unsubscribe:
-      subject: 'Unsubscribe Confirmation'
+      subject: 'Potvrda odjave'
     excel:
-      subject: 'All subscriptions made in a previous month'
+      subject: 'Izveštaj o newsletter pretplatama za prethodni mesec'
 
 aws:
   region: ${AWS_REGION}
@@ -75,13 +75,13 @@ aws:
     root-folder: 'images'
 
 app:
-  protocol: ${PROTOCOL}
-  host: ${HOST}
-  base-url: '${app.protocol}://${app.host}:${server.port}'
+  base-url: ${BASE_URL}
   newsletter:
     unsubscribe-path: '/dota/newsletter/unsubscribe'
   health-check:
     rate: ${HEALTH_CHECK_RATE}
+  fe-home-path: ${FE_HOME_PATH}
+  logo-path: ${LOGO_PATH}
 
 origin:
   allowed: ${ORIGIN_ALLOWED}
@@ -92,5 +92,5 @@ excel:
 
 newsletter:
   unsubscribe:
-    successful: 'You unsubscribed successfully.'
-    unsuccessful: 'Your unsubscribe request was not executed successfully.'
+    successful: 'Client unsubscribed successfully.'
+    unsuccessful: 'Client already unsubscribed or was not found in db.'

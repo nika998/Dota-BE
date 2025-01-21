@@ -1,5 +1,6 @@
 package com.artigo.dota.service;
 
+import com.artigo.dota.dto.ProductDetailQuantityDTO;
 import com.artigo.dota.dto.ProductDetailsDTO;
 import com.artigo.dota.dto.ProductImageUrlDTO;
 import com.artigo.dota.entity.ProductDO;
@@ -20,6 +21,8 @@ public interface ProductDetailsService {
     ProductDetailsDO saveProductDetails(ProductDetailsDTO productDetailsDTO, List<ProductImageUrlDTO> uploadedImagesDTO);
 
     ProductDetailsDTO getProductById(Long id);
+
+    List<ProductDetailQuantityDTO> getProductDetailQuantities(List<Long> idList);
 
     List<ProductDetailsDO> deleteProductDetailsList(List<ProductDetailsDO> productDetails);
 

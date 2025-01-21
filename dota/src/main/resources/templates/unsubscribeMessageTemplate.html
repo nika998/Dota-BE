@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Newsletter Unsubscribe Confirmation</title>
+    <meta charset="UTF-8">
+    <title>Potvrda odjave sa newslettera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h2 {
+            color: #8E44AD;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1rem;
+            color: #333;
+            margin: 0.5rem 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.7rem 1.5rem;
+            background-color: #8E44AD;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #732d91;
+        }
+        .logo {
+            margin-top: 2rem;
+        }
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-<h2>Unsubscribe Confirmation</h2>
-<p th:text="${message}"></p>
-<p>Any additional content or instructions here...</p>
+<div class="container">
+    <h2>Uspešna odjava</h2>
+    <p>Uspešno ste se odjavili sa našeg newslettera. Žao nam je što odlazite!</p>
+    <p>Ako ste se predomislili, možete se ponovo prijaviti na našoj početnoj stranici.</p>
+    <a th:href="${homePage}">Povratak na početnu stranicu</a>
+    <div class="logo">
+        <img th:src="${logoUrl}" alt="Logo">
+    </div>
+</div>
 </body>
 </html>
