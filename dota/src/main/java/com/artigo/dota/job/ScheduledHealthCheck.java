@@ -19,7 +19,7 @@ public class ScheduledHealthCheck {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(fixedRateString = "${app.health-check.rate}")
+//    @Scheduled(fixedRateString = "${app.health-check.rate}")
     public void checkHealth() {
         try {
             String url = baseUrl + "/dota/actuator/health";

@@ -84,7 +84,7 @@ public class NewsletterServiceImpl implements NewsletterService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 12 * * *")//Every day at 12PM
+    @Scheduled(cron = "0 0 10 * * *")//Every day at 10AM
     @Transactional
     public void exportAllSubsMadeToday() {
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
@@ -97,10 +97,10 @@ public class NewsletterServiceImpl implements NewsletterService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 12 1 * *")
+    @Scheduled(cron = "0 0 10 1 * *")
     public void exportMonthlyExcelReport() {
-        var startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
-        var endDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        var startDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        var endDate = LocalDateTime.now().withDayOfMonth(31).withHour(0).withMinute(0).withSecond(0);
 
         try {
             generateExcelFile(newsletterRepository.findByCreatedAtBetweenAndIsDeletedFalse(startDate, endDate));
@@ -123,7 +123,7 @@ public class NewsletterServiceImpl implements NewsletterService {
                 this.fillNewsletterItemRow(row, newsletter);
             }
 
-            String excelFileName = "monthly_subscriptions_data.xlsx";
+            String excelFileName = "mesecne_newsletter_pretplate.xlsx";
             Path tempDir = Files.createTempDirectory("sub_excel_temp");
             String excelFilePath = tempDir.resolve(excelFileName).toString();
             try (FileOutputStream fos = new FileOutputStream(excelFilePath)) {
@@ -135,7 +135,7 @@ public class NewsletterServiceImpl implements NewsletterService {
     }
 
     private void createHeaderRow(Row headerRow) {
-        String[] headers = {"Subscription ID", "Email", "Subscription time"};
+        String[] headers = {"ID pretplate", "Email", "Datum pretplate"};
         int colNum = 0;
         for (String header : headers) {
             Cell cell = headerRow.createCell(colNum++);

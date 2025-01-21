@@ -1,11 +1,13 @@
 package com.artigo.dota.service.impl;
 
+import com.artigo.dota.dto.ProductDetailQuantityDTO;
 import com.artigo.dota.dto.ProductDetailsDTO;
 import com.artigo.dota.dto.ProductImageUrlDTO;
 import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.entity.ProductDetailsDO;
 import com.artigo.dota.entity.ProductImageDO;
 import com.artigo.dota.exception.EntityNotFoundException;
+import com.artigo.dota.mapper.ProductDetailQuantityMapper;
 import com.artigo.dota.mapper.ProductDetailsMapper;
 import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.repository.ProductDetailsRepository;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProductDetailsServiceImpl implements ProductDetailsService {
@@ -32,18 +35,29 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     private final ProductImageMapper productImageMapper;
 
-    public ProductDetailsServiceImpl(ProductDetailsRepository productDetailsRepository, ProductRepository productRepository, ProductImageService productImageService, ProductDetailsMapper productDetailsMapper, ProductImageMapper productImageMapper) {
+    private final ProductDetailQuantityMapper productDetailQuantityMapper;
+
+    public ProductDetailsServiceImpl(ProductDetailsRepository productDetailsRepository, ProductRepository productRepository, ProductImageService productImageService, ProductDetailsMapper productDetailsMapper, ProductImageMapper productImageMapper, ProductDetailQuantityMapper productDetailQuantityMapper) {
         this.productDetailsRepository = productDetailsRepository;
         this.productRepository = productRepository;
         this.productImageService = productImageService;
         this.productDetailsMapper = productDetailsMapper;
         this.productImageMapper = productImageMapper;
+        this.productDetailQuantityMapper = productDetailQuantityMapper;
     }
 
     @Override
     public ProductDetailsDTO getProductById(Long id) {
         var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
         return productDetailsMapper.entityToDto(productDetailsDO);
+    }
+
+    @Override
+    public List<ProductDetailQuantityDTO> getProductDetailQuantities(List<Long> idList) {
+        return idList.stream()
+                .map(id -> productDetailsRepository.findByIdAndIsDeletedFalse(id).orElse(null))
+                .filter(Objects::nonNull)
+                .map(productDetailQuantityMapper::entityToDto).toList();
     }
 
     @Override

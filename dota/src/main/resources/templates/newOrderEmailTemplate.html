@@ -2,64 +2,122 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>New Order Notification</title>
+    <title>Obaveštenje o novoj porudžbini</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #8E44AD;
+            text-transform: uppercase;
+            margin-bottom: 1em;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 1.5em;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+        li {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        strong {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5em;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #8E44AD;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-<h1>New Order Notification</h1>
+<div class="container">
+    <h1>Obaveštenje o novoj porudžbini</h1>
+    <p>Poštovani,</p>
+    <p>Postavljena je nova porudžbina sa sledećim podacima:</p>
 
-<p>Hello,</p>
+    <!-- Osnovne informacije o porudžbini -->
+    <ul>
+        <li><strong>ID porudžbine:</strong> <span th:text="${#strings.escapeXml(order.id)}">23</span></li>
+        <li><strong>Ime kupca:</strong> <span th:text="${#strings.escapeXml(order.fullName)}">Nikola Dulovic</span></li>
+        <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(order.email)}">dulovicnika27@gmail.com</span></li>
+        <li><strong>Grad:</strong> <span th:text="${#strings.escapeXml(order.city)}">Beograd Vozdovac</span></li>
+        <li><strong>Poštanski broj:</strong> <span th:text="${#strings.escapeXml(order.postalCode)}">11010</span></li>
+        <li><strong>Adresa:</strong> <span th:text="${#strings.escapeXml(order.address)}">Brace Jerkovic 65</span></li>
+        <li><strong>Broj stana:</strong> <span th:text="${#strings.escapeXml(order.flatNumber)}">6</span></li>
+        <li><strong>Telefon:</strong> <span th:text="${#strings.escapeXml(order.phone)}">069001002</span></li>
+        <li><strong>Opis:</strong> <span th:text="${#strings.escapeXml(order.description)}">Testiranje</span></li>
+        <li><strong>Ukupna cena:</strong> <span th:text="${#strings.escapeXml(order.totalPrice)}">3400</span></li>
+        <li><strong>Datum kreiranja:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}">05-01-2025 15:13:41</span></li>
+        <li><strong>Vrsta dostave:</strong> <span th:text="${order.waitReserved ? 'Čekanje na dostupnost rezervisanih artikala' : 'Isporuka dostupnih artikala prvo'}"></span></li>
+    </ul>
 
-<div th:if="${!client}">
-    <p>A new order has been placed with the following details:</p>
+    <!-- Tabela sa artiklima u porudžbini -->
+    <h2>Artikli u porudžbini:</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Naziv proizvoda</th>
+            <th>Vrsta proizvoda</th>
+            <th>Količina</th>
+            <th>Boja</th>
+            <th>Dostupnost</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.orderItems}">
+            <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.name ?: 'Nepoznat')}"></span></td>
+            <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.type ?: 'Nepoznat')}"></span></td>
+            <td><span th:text="${#strings.escapeXml(item.quantity)}"></span></td>
+            <td><span th:text="${#strings.escapeXml(item.productDetails.info)}"></span></td>
+            <td><span th:text="${item.isAvailable ? 'Dostupno' : 'Rezervisano'}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${!client}">
+        <p>Molimo vas da preduzmete potrebne akcije za realizaciju porudžbine.</p>
+    </div>
+
+    <div th:if="${client}">
+        <p>Vaši naručeni artikli biće poslati u najkraćem mogućem roku.</p>
+    </div>
+
+    <p>Hvala!</p>
+
+    <img th:src="${logoUrl}" alt="Logo">
 </div>
-
-<div th:if="${client}">
-    <p>Your order has been registered correctly.</p>
-</div>
-
-<p>Order ID: <span th:text="${#strings.escapeXml(order.id)}"></span></p>
-<p>Customer Name: <span th:text="${#strings.escapeXml(order.fullName)}"></span></p>
-<p>Email: <span th:text="${#strings.escapeXml(order.email)}"></span></p>
-<p>City: <span th:text="${#strings.escapeXml(order.city)}"></span></p>
-<p>Postal Code: <span th:text="${#strings.escapeXml(order.postalCode)}"></span></p>
-<p>Address: <span th:text="${#strings.escapeXml(order.address)}"></span></p>
-<p>Flat Number: <span th:text="${#strings.escapeXml(order.flatNumber)}"></span></p>
-<p>Phone: <span th:text="${#strings.escapeXml(order.phone)}"></span></p>
-<p>Description: <span th:text="${#strings.escapeXml(order.description)}"></span></p>
-<p>Total Price: <span th:text="${#strings.escapeXml(order.totalPrice)}"></span></p>
-<p>Created At: <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
-<p>Type of delivery: <span th:text="${order.waitReserved ? 'Wait for reserved items to be available' : 'Deliver available items first'}"></span></p>
-
-<h2>Order Items:</h2>
-<table border="1">
-    <thead>
-    <tr>
-        <th>Product name</th>
-        <th>Product type</th>
-        <th>Quantity</th>
-        <th>Color</th>
-        <th>Availability</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="item : ${order.orderItems}">
-        <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.name ?: 'Unknown')}"></span></td>
-        <td><span th:text="${#strings.escapeXml(productsFromOrder[item.productDetails.productId]?.type ?: 'Unknown')}"></span></td>
-        <td><span th:text="${#strings.escapeXml(item.quantity)}"></span></td>
-        <td><span th:text="${#strings.escapeXml(item.productDetails.info)}"></span></td>
-        <td><span th:text="${item.isAvailable? 'Available' : 'Reserved'}"></span></td>
-    </tr>
-    </tbody>
-</table>
-
-<div th:if="${!client}">
-    <p>Please take necessary actions to fulfill the order.</p>
-</div>
-
-<div th:if="${client}">
-    <p>Your ordered items will be sent to you as soon as possible.</p>
-</div>
-
-<p>Thank you!</p>
 </body>
 </html>

@@ -2,16 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Contact Form Submission</title>
+    <title>Poruka sa kontakt forme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+        li {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        strong {
+            color: #333;
+        }
+         p {
+            text-align: left;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-<h1>New Contact Form Submission</h1>
-<p>A new message has been received through the contact form:</p>
-<ul>
-    <li><strong>Full Name:</strong> <span th:text="${#strings.escapeXml(contactForm.fullName)}"></span></li>
-    <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(contactForm.email)}"></span></li>
-    <li th:if="${contactForm.phone}"><strong>Phone:</strong> <span th:text="${#strings.escapeXml(contactForm.phone)}"></span></li>
-    <li th:if="${contactForm.message}"><strong>Message:</strong> <span th:text="${#strings.escapeXml(contactForm.message)}"></span></li>
-</ul>
+<div class="container">
+    <p>Primljena je nova poruka putem kontakt forme:</p>
+    <ul>
+        <li><strong>Ime i prezime:</strong> <span th:text="${#strings.escapeXml(contactForm.fullName)}"></span></li>
+        <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(contactForm.email)}"></span></li>
+        <li th:if="${contactForm.phone}"><strong>Telefon:</strong> <span th:text="${#strings.escapeXml(contactForm.phone)}"></span></li>
+        <li th:if="${contactForm.message}"><strong>Poruka:</strong> <span th:text="${#strings.escapeXml(contactForm.message)}"></span></li>
+    </ul>
+</div>
 </body>
 </html>
