@@ -1,18 +1,22 @@
 package com.artigo.dota.controller;
 
 import com.artigo.dota.service.ProductImageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
-    @Autowired
-    private ProductImageService productImageService;
+    private final ProductImageService productImageService;
+
+    public ImageController(ProductImageService productImageService) {
+        this.productImageService = productImageService;
+    }
 
     @PostMapping(value = "/upload-image",
                  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -23,7 +27,7 @@ public class ImageController {
 
     @GetMapping(value = "/{productImageId}/get-image",
                 produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getImage(@PathVariable("productImageId") Long productImageId) {
+    public byte[] getImage(@PathVariable("productImageId") UUID productImageId) {
         return productImageService.getProductImage(productImageId);
     }
 }

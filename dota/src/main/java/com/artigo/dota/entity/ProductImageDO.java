@@ -3,6 +3,10 @@ package com.artigo.dota.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.UUID;
 
 @Entity(name = "product_image")
 @Data
@@ -16,6 +20,7 @@ public class ProductImageDO extends BaseEntity{
     private String imagePath;
 
     @Column(name = "product_detail_id", nullable = false)
-    private Long productDetailId;
+    @JdbcTypeCode(SqlTypes.CHAR)
+    private UUID productDetailId;
 
 }

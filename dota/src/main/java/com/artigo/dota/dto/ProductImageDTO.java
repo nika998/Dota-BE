@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @Data
 public class ProductImageDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotNull(message = "isDisplay is required")
     private Boolean isDisplay;

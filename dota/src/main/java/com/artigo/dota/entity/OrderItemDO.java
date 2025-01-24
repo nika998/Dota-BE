@@ -3,7 +3,11 @@ package com.artigo.dota.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Where;
+import org.hibernate.type.SqlTypes;
+
+import java.util.UUID;
 
 @Entity(name = "order_item")
 @Data
@@ -12,7 +16,8 @@ import org.hibernate.annotations.Where;
 public class OrderItemDO extends BaseEntity{
 
     @Column(name = "order_id", nullable = false)
-    private Long orderId;
+    @JdbcTypeCode(SqlTypes.CHAR)
+    private UUID orderId;
 
     @ManyToOne
     @JoinColumn(name = "product_details_id", nullable = false)

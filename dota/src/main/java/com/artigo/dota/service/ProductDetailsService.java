@@ -7,12 +7,13 @@ import com.artigo.dota.entity.ProductDO;
 import com.artigo.dota.entity.ProductDetailsDO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductDetailsService {
 
-    boolean reduceProductQuantity(long productDetailsId, int orderedQuantity);
+    boolean reduceProductQuantity(UUID productDetailsId, int orderedQuantity);
 
-    boolean checkProductAvailability(long productDetailsId, int orderedQuantity);
+    boolean checkProductAvailability(UUID productDetailsId, int orderedQuantity);
 
     ProductDO getRelatedProduct(ProductDetailsDO productDetailsDO);
 
@@ -20,11 +21,11 @@ public interface ProductDetailsService {
 
     ProductDetailsDO saveProductDetails(ProductDetailsDTO productDetailsDTO, List<ProductImageUrlDTO> uploadedImagesDTO);
 
-    ProductDetailsDTO getProductById(Long id);
+    ProductDetailsDTO getProductById(UUID id);
 
-    List<ProductDetailQuantityDTO> getProductDetailQuantities(List<Long> idList);
+    List<ProductDetailQuantityDTO> getProductDetailQuantities(List<UUID> idList);
 
     List<ProductDetailsDO> deleteProductDetailsList(List<ProductDetailsDO> productDetails);
 
-    ProductDetailsDTO deleteProductDetail(Long id);
+    ProductDetailsDTO deleteProductDetail(UUID id);
 }

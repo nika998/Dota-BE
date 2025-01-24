@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class ProductImageUrlDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotNull(message = "isDisplay is required")
     private Boolean isDisplay;

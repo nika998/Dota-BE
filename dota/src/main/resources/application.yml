@@ -4,10 +4,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=10m
   mail:
     host: smtp.gmail.com
     port: 587
@@ -31,21 +27,10 @@ spring:
 server:
   port: ${PORT:8080}
   servlet:
-    context-path: /dota
+    context-path: /api
 
 custom:
   token: ${CUSTOM_TOKEN}
-
-management:
-  endpoints:
-    enabled-by-default: false
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      enabled: true
-      show-details: never
 
 mail:
   recipients:

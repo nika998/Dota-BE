@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductService {
     List<ProductDTO> getAllProducts();
@@ -21,11 +22,11 @@ public interface ProductService {
 
     Page<ProductDTO> getProductsByTypePageable(Pageable pageable, String type);
 
-    ProductDTO getProductById(Long id);
+    ProductDTO getProductById(UUID id);
 
     ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException;
 
     ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException;
 
-    ProductDTO deleteProduct(Long id);
+    ProductDTO deleteProduct(UUID id);
 }

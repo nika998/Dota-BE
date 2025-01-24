@@ -8,8 +8,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface NewsletterRepository extends JpaRepository<NewsletterDO, Long> {
+public interface NewsletterRepository extends JpaRepository<NewsletterDO, UUID> {
     List<NewsletterDO> findByCreatedAtBetweenAndIsDeletedFalse(LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("SELECT DISTINCT n.email FROM newsletter n WHERE n.createdAt BETWEEN :startDate AND :endDate AND n.isDeleted = true")

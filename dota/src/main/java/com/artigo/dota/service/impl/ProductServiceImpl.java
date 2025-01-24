@@ -7,15 +7,11 @@ import com.artigo.dota.exception.EntityNotFoundException;
 import com.artigo.dota.exception.ImageProcessingException;
 import com.artigo.dota.exception.ProductNotProcessedException;
 import com.artigo.dota.mapper.ProductDetailsMapper;
-import com.artigo.dota.mapper.ProductImageMapper;
 import com.artigo.dota.mapper.ProductMapper;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.ProductDetailsService;
 import com.artigo.dota.service.ProductImageService;
 import com.artigo.dota.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,23 +23,24 @@ import java.util.*;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductImageService productImageService;
+    private final ProductImageService productImageService;
 
-    @Autowired
-    private ProductDetailsService productDetailsService;
+    private final ProductDetailsService productDetailsService;
 
-    @Autowired
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper;
 
-    @Autowired
-    private ProductDetailsMapper productDetailsMapper;
+    private final ProductDetailsMapper productDetailsMapper;
 
-    @Autowired
-    private ProductImageMapper productImageMapper;
+    public ProductServiceImpl(ProductRepository productRepository, ProductImageService productImageService, ProductDetailsService productDetailsService,
+                              ProductMapper productMapper, ProductDetailsMapper productDetailsMapper) {
+        this.productRepository = productRepository;
+        this.productImageService = productImageService;
+        this.productDetailsService = productDetailsService;
+        this.productMapper = productMapper;
+        this.productDetailsMapper = productDetailsMapper;
+    }
 
 
     @Override
@@ -53,7 +50,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "products", key = "#pageable.pageNumber")
     public Page<ProductDTO> getProductsPageable(Pageable pageable) {
         Page<ProductDO> productPage = productRepository.findAll(pageable);
         return productPage.map(productMapper::entityToDto);
@@ -72,15 +68,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "product", key = "#id")
-    public ProductDTO getProductById(Long id) {
+    public ProductDTO getProductById(UUID id) {
         ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
         return productMapper.entityToDto(product);
     }
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductDTO processProduct(ProductSubmitDTO product, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         var productDetailsSubmitDTOs = product.getProductDetails();
         product.setProductDetails(null);
@@ -96,8 +90,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "product"}, allEntries = true)
-    public ProductDTO deleteProduct(Long id) {
+    public ProductDTO deleteProduct(UUID id) {
         ProductDO product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with provided id not found"));
         productDetailsService.deleteProductDetailsList(product.getProductDetails());
         product.setIsDeleted(Boolean.TRUE);
@@ -114,7 +107,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
     public ProductDetailsDO processProductDetails(ProductSubmitDTO product, ProductDetailsSubmitDTO productDetails, List<MultipartFile> files) throws ImageProcessingException, ProductNotProcessedException {
         if(files.size() < productDetails.getImages().size()) {
             throw new ImageProcessingException("Image files do not match with ProductImageDTOs");
@@ -128,16 +120,11 @@ public class ProductServiceImpl implements ProductService {
                 Long productId = Long.parseLong(parts[0]);
 
                 // Find the corresponding ProductImageDTO using the productId
-                ProductImageDTO productImageDTO = productDetails.getImages()
+                productDetails.getImages()
                         .stream()
                         .filter(image -> productId.equals(image.getProductImageId()))
-                        .findFirst()
-                        .orElse(null);
+                        .findFirst().ifPresent(productImageDTO -> productImageDTO.setFile(file));
 
-                if (productImageDTO != null) {
-                    // Associate the file with the corresponding ProductImageDTO
-                    productImageDTO.setFile(file);
-                }
             } else {
                 throw new ImageProcessingException("Image files are not named properly");
             }

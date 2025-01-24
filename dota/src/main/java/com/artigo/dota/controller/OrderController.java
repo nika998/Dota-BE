@@ -5,17 +5,21 @@ import com.artigo.dota.exception.MailNotSentException;
 import com.artigo.dota.exception.OrderItemsNonAvailableException;
 import com.artigo.dota.service.OrderService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PostMapping
     public ResponseEntity<?> saveOrder(@RequestBody@Valid OrderDTO orderDTO) {
@@ -29,7 +33,7 @@ public class OrderController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteOrder(@RequestParam Long orderId) {
+    public ResponseEntity<?> deleteOrder(@RequestParam UUID orderId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.deleteOrder(orderId));
     }
 }

@@ -3,9 +3,10 @@ package com.artigo.dota.dto;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class ProductDetailQuantitiesRequestDTO {
 
-    private List<Long> productDetailIds;
+    private List<UUID> productDetailIds;
 }

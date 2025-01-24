@@ -6,11 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class NewsletterDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")

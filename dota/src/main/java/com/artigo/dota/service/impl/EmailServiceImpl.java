@@ -19,6 +19,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class EmailServiceImpl implements EmailService {
+
+    private static final String CURRENCY= "RSD";
 
     private final EmailProperties emailProperties;
 
@@ -47,11 +51,14 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.fe-home-path}")
     private String homePage;
 
+    private final NumberFormat priceFormat;
+
     public EmailServiceImpl(EmailProperties emailProperties, JavaMailSender emailSender, TemplateEngine templateEngine, ProductRepository productRepository) {
         this.emailProperties = emailProperties;
         this.emailSender = emailSender;
         this.templateEngine = templateEngine;
         this.productRepository = productRepository;
+        priceFormat = new DecimalFormat("0.00");
     }
 
     @Override
@@ -93,6 +100,7 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("order", order);
             context.setVariable("productsFromOrder", productsFromOrder);
             context.setVariable("logoUrl", logoUrl);
+            context.setVariable("formattedPrice", priceFormat.format(order.getTotalPrice()) + " " + CURRENCY);
             String htmlContent = templateEngine.process("newOrderEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content

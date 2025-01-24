@@ -92,10 +92,6 @@
 			<artifactId>flyway-mysql</artifactId>
 			<version>${flywaydb.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>

@@ -146,7 +146,7 @@ public class NewsletterServiceImpl implements NewsletterService {
     private void fillNewsletterItemRow(Row row, NewsletterDO newsletter) {
         int colNum = 0;
 
-        row.createCell(colNum++).setCellValue(newsletter.getId());
+        row.createCell(colNum++).setCellValue(newsletter.getId().toString());
         row.createCell(colNum++).setCellValue(newsletter.getEmail());
         row.createCell(colNum).setCellValue(newsletter.getCreatedAt().toString());
     }

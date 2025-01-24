@@ -8,6 +8,7 @@ import com.artigo.dota.exception.OrderItemsNonAvailableException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public interface OrderService {
 
@@ -17,5 +18,5 @@ public interface OrderService {
 
     OrderDO saveOrder(OrderDTO orderDTO);
 
-    OrderDTO deleteOrder(Long orderId);
+    OrderDTO deleteOrder(UUID orderId);
 }

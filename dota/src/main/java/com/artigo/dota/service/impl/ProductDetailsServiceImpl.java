@@ -14,13 +14,13 @@ import com.artigo.dota.repository.ProductDetailsRepository;
 import com.artigo.dota.repository.ProductRepository;
 import com.artigo.dota.service.ProductDetailsService;
 import com.artigo.dota.service.ProductImageService;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class ProductDetailsServiceImpl implements ProductDetailsService {
@@ -47,13 +47,13 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     }
 
     @Override
-    public ProductDetailsDTO getProductById(Long id) {
+    public ProductDetailsDTO getProductById(UUID id) {
         var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
         return productDetailsMapper.entityToDto(productDetailsDO);
     }
 
     @Override
-    public List<ProductDetailQuantityDTO> getProductDetailQuantities(List<Long> idList) {
+    public List<ProductDetailQuantityDTO> getProductDetailQuantities(List<UUID> idList) {
         return idList.stream()
                 .map(id -> productDetailsRepository.findByIdAndIsDeletedFalse(id).orElse(null))
                 .filter(Objects::nonNull)
@@ -74,8 +74,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "product"}, allEntries = true)
-    public ProductDetailsDTO deleteProductDetail(Long id) {
+    public ProductDetailsDTO deleteProductDetail(UUID id) {
         ProductDetailsDO productDetails = productDetailsRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new EntityNotFoundException("Product details with provided id not found"));
         productImageService.deleteProductImagesList(productDetails.getImages());
         productDetails.setIsDeleted(Boolean.TRUE);
@@ -90,7 +89,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     @Transactional
-    public boolean reduceProductQuantity(long productDetailsId, int orderedQuantity) {
+    public boolean reduceProductQuantity(UUID productDetailsId, int orderedQuantity) {
         var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId);
         if(productDetailsDO.isPresent() && productDetailsDO.get().getQuantity() >= orderedQuantity) {
             productDetailsDO.get().setQuantity(productDetailsDO.get().getQuantity() - orderedQuantity);
@@ -100,7 +99,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     }
 
     @Override
-    public boolean checkProductAvailability(long productDetailsId, int orderedQuantity) {
+    public boolean checkProductAvailability(UUID productDetailsId, int orderedQuantity) {
         var productDetailsDO = productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId);
         return (productDetailsDO.isPresent() && productDetailsDO.get().getQuantity() >= orderedQuantity);
     }

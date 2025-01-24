@@ -6,16 +6,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class ProductDetailsSubmitDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotNull(message = "Color is required")
     private String color;
 
-    private Long productId;
+    private UUID productId;
 
     @Min(value = 0, message = "Quantity must be non-negative")
     private int quantity;

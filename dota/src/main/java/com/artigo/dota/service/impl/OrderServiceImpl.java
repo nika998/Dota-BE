@@ -11,7 +11,6 @@ import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +43,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException, MailNotSentException {
 
-        var itemsRecentlyNotAvailable  = checkOrder(orderDTO.getOrderItems());
-        if(!itemsRecentlyNotAvailable.isEmpty()) {
+        var itemsRecentlyNotAvailable = checkOrder(orderDTO.getOrderItems());
+        if (!itemsRecentlyNotAvailable.isEmpty()) {
             orderDTO.setOrderItems(itemsRecentlyNotAvailable);
             throw new OrderItemsNonAvailableException("Some of the ordered items are not available", orderDTO);
         }
@@ -63,9 +61,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ArrayList<OrderItemDTO> checkOrder(List<OrderItemDTO> orderItems) {
         var itemsRecentlyNotAvailable = new ArrayList<OrderItemDTO>();
-        orderItems.stream()
+        orderItems
                 .forEach(orderItemDTO -> {
-                    if(Boolean.TRUE.equals(orderItemDTO.getIsAvailable()) && !productDetailsService.checkProductAvailability(orderItemDTO.getProductDetailsId(), orderItemDTO.getQuantity())) {
+                    if (Boolean.TRUE.equals(orderItemDTO.getIsAvailable()) && !productDetailsService.checkProductAvailability(orderItemDTO.getProductDetailsId(), orderItemDTO.getQuantity())) {
                         orderItemDTO.setIsAvailable(false);
                         itemsRecentlyNotAvailable.add(orderItemDTO);
                     }
@@ -74,11 +72,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
-    public OrderDO saveOrder(OrderDTO orderDTO){
+    public OrderDO saveOrder(OrderDTO orderDTO) {
 
         List<OrderItemDO> orderItemDOs = orderDTO.getOrderItems().stream()
-                        .map(orderItemMapper::dtoToEntity).toList();
+                .map(orderItemMapper::dtoToEntity).toList();
 
         orderDTO.setOrderItems(null);
         OrderDO orderDO = orderMapper.dtoToEntity(orderDTO);
@@ -90,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         savedOrder.setOrderItems(orderItemService.saveAll(orderItemDOs));
 
         savedOrder.getOrderItems().forEach(orderItemDO ->
-            productDetailsService.reduceProductQuantity(orderItemDO.getProductDetails().getId(), orderItemDO.getQuantity())
+                productDetailsService.reduceProductQuantity(orderItemDO.getProductDetails().getId(), orderItemDO.getQuantity())
         );
 
         return savedOrder;
@@ -98,13 +95,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "product"}, allEntries = true)
-    public OrderDTO deleteOrder(Long orderId) {
+    public OrderDTO deleteOrder(UUID orderId) {
         var orderToDelete = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order with provided id not found"));
         var orderItemsToDelete = orderItemService.deleteOrderItemsList(orderToDelete.getOrderItems());
         orderToDelete.setIsDeleted(Boolean.TRUE);
         orderItemsToDelete.forEach(orderItemDO ->
-            orderItemDO.getProductDetails().setQuantity(orderItemDO.getProductDetails().getQuantity() + orderItemDO.getQuantity())
+                orderItemDO.getProductDetails().setQuantity(orderItemDO.getProductDetails().getQuantity() + orderItemDO.getQuantity())
         );
 
         var deletedOrder = orderRepository.save(orderToDelete);

@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.UUID;
+
 @Mapper
 public abstract class OrderItemMapper {
 
@@ -25,7 +27,7 @@ public abstract class OrderItemMapper {
         return false;
     }
 
-    protected ProductDetailsDO getProductDetails(Long productDetailsId) {
+    protected ProductDetailsDO getProductDetails(UUID productDetailsId) {
         return productDetailsRepository.findByIdAndIsDeletedFalse(productDetailsId)
                 .orElseThrow(() -> new RuntimeException("ProductDetailsDO not found for id: " + productDetailsId));
     }

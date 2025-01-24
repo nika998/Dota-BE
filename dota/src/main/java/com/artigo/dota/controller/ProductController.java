@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
@@ -49,12 +50,12 @@ public class ProductController {
     }
 
     @GetMapping("details/{id}")
-    public ResponseEntity<ProductDetailsDTO> getProductDetailById(@PathVariable Long id) {
+    public ResponseEntity<ProductDetailsDTO> getProductDetailById(@PathVariable UUID id) {
         return ResponseEntity.ok(productDetailsService.getProductById(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -84,12 +85,12 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable UUID id) {
         return ResponseEntity.ok(productService.deleteProduct(id));
     }
 
     @DeleteMapping("details/{id}")
-    public ResponseEntity<ProductDetailsDTO> deleteProductDetail(@PathVariable Long id) {
+    public ResponseEntity<ProductDetailsDTO> deleteProductDetail(@PathVariable UUID id) {
         return ResponseEntity.ok(productDetailsService.deleteProductDetail(id));
     }
 

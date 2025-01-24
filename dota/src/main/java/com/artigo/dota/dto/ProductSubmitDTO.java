@@ -6,11 +6,12 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class ProductSubmitDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotBlank(message = "Name is required")
     @Size(max = 30, message = "Name must be less than or equal to 30 characters")

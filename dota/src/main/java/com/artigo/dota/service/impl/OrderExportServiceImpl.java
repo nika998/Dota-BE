@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,11 +29,15 @@ import java.util.List;
 @Slf4j
 public class OrderExportServiceImpl implements OrderExportService {
 
+    private static final String CURRENCY= "RSD";
+
     private final OrderRepository orderRepository;
 
     private final ProductRepository productRepository;
 
     private final EmailService emailService;
+
+    private final NumberFormat priceFormat;
 
     @Value("${excel.sheet.name:Orders}")
     private String excelSheetName;
@@ -40,11 +46,12 @@ public class OrderExportServiceImpl implements OrderExportService {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.emailService = emailService;
+        priceFormat = new DecimalFormat("0.00");
     }
 
     @Scheduled(cron = "0 0 10 * * *")//Every day at 10AM
     public void exportDailyOrdersExcel() {
-        log.info("Daily orders report exporting started: " + LocalDateTime.now());
+        log.info("Daily orders report exporting started: {}", LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);
         LocalDateTime endDate = LocalDateTime.now();
 
@@ -60,7 +67,7 @@ public class OrderExportServiceImpl implements OrderExportService {
 
     @Scheduled(cron = "0 0 10 1 * *")
     public void exportMonthlyOrdersExcel() {
-        log.info("Monthly orders report exporting started: " + LocalDateTime.now());
+        log.info("Monthly orders report exporting started: {}", LocalDateTime.now());
         LocalDateTime startDate = LocalDateTime.now().minusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
         LocalDateTime endDate = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 
@@ -107,7 +114,7 @@ public class OrderExportServiceImpl implements OrderExportService {
 
     private void createHeaderRow(Row headerRow) {
         String[] headers = {"ID porudžbine", "Ime i prezime", "Email", "Grad", "Poštanski broj", "Adresa", "Broj stana",
-                "Telefon", "Opis", "Ukupna cena", "Datum kreiranja", "Tip dostave", "Dostupnsot", "Naziv prozivoda", "Tip proizvoda",
+                "Telefon", "Napomena", "Ukupna cena", "Datum kreiranja", "Tip dostave", "Dostupnsot", "Naziv prozivoda", "Tip proizvoda",
                 "Količina", "Boja"};
         int colNum = 0;
         for (String header : headers) {
@@ -121,7 +128,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         var product = productRepository.findById(orderItem.getProductDetails().getProductId());
         int colNum = 0;
 
-        row.createCell(colNum++).setCellValue(order.getId());
+        row.createCell(colNum++).setCellValue(order.getId().toString());
         row.createCell(colNum++).setCellValue(order.getFullName());
         row.createCell(colNum++).setCellValue(order.getEmail());
         row.createCell(colNum++).setCellValue(order.getCity());
@@ -130,7 +137,7 @@ public class OrderExportServiceImpl implements OrderExportService {
         row.createCell(colNum++).setCellValue(order.getFlatNumber());
         row.createCell(colNum++).setCellValue(order.getPhone());
         row.createCell(colNum++).setCellValue(order.getDescription());
-        row.createCell(colNum++).setCellValue(order.getTotalPrice().doubleValue());
+        row.createCell(colNum++).setCellValue(priceFormat.format(order.getTotalPrice()) + " " + CURRENCY);
         row.createCell(colNum++).setCellValue(order.getCreatedAt().toString());
         row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(order.getWaitReserved())? "Sačekati rezervisane proizvode" : "Dostaviti dostupne proizvode prvo");
         row.createCell(colNum++).setCellValue(Boolean.TRUE.equals(orderItem.getIsAvailable())? "Dostupno" : "Rezervisano");

@@ -6,11 +6,12 @@ import com.artigo.dota.entity.ProductImageDO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductImageService {
     String uploadProductImage(String imageUrl, MultipartFile file);
 
-    byte[] getProductImage(Long productImageId);
+    byte[] getProductImage(UUID productImageId);
 
     List<ProductImageUrlDTO> uploadProductImages(List<ProductImageDTO> images, String type, String name, String color);
 

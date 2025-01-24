@@ -70,17 +70,17 @@
 
     <!-- Osnovne informacije o porudžbini -->
     <ul>
-        <li><strong>ID porudžbine:</strong> <span th:text="${#strings.escapeXml(order.id)}">23</span></li>
-        <li><strong>Ime kupca:</strong> <span th:text="${#strings.escapeXml(order.fullName)}">Nikola Dulovic</span></li>
-        <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(order.email)}">dulovicnika27@gmail.com</span></li>
-        <li><strong>Grad:</strong> <span th:text="${#strings.escapeXml(order.city)}">Beograd Vozdovac</span></li>
-        <li><strong>Poštanski broj:</strong> <span th:text="${#strings.escapeXml(order.postalCode)}">11010</span></li>
-        <li><strong>Adresa:</strong> <span th:text="${#strings.escapeXml(order.address)}">Brace Jerkovic 65</span></li>
-        <li><strong>Broj stana:</strong> <span th:text="${#strings.escapeXml(order.flatNumber)}">6</span></li>
-        <li><strong>Telefon:</strong> <span th:text="${#strings.escapeXml(order.phone)}">069001002</span></li>
-        <li><strong>Opis:</strong> <span th:text="${#strings.escapeXml(order.description)}">Testiranje</span></li>
-        <li><strong>Ukupna cena:</strong> <span th:text="${#strings.escapeXml(order.totalPrice)}">3400</span></li>
-        <li><strong>Datum kreiranja:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}">05-01-2025 15:13:41</span></li>
+        <li><strong>ID porudžbine:</strong> <span th:text="${#strings.escapeXml(order.id)}"></span></li>
+        <li><strong>Ime kupca:</strong> <span th:text="${#strings.escapeXml(order.fullName)}"></span></li>
+        <li><strong>Email:</strong> <span th:text="${#strings.escapeXml(order.email)}"></span></li>
+        <li><strong>Grad:</strong> <span th:text="${#strings.escapeXml(order.city)}"></span></li>
+        <li><strong>Poštanski broj:</strong> <span th:text="${#strings.escapeXml(order.postalCode)}"></span></li>
+        <li><strong>Adresa:</strong> <span th:text="${#strings.escapeXml(order.address)}"></span></li>
+        <li><strong>Broj stana:</strong> <span th:text="${#strings.escapeXml(order.flatNumber)}"></span></li>
+        <li><strong>Telefon:</strong> <span th:text="${#strings.escapeXml(order.phone)}"></span></li>
+        <li><strong>Opis:</strong> <span th:text="${#strings.escapeXml(order.description)}"></span></li>
+        <li><strong>Ukupna cena:</strong> <span th:text="${formattedPrice}"></span></li>
+        <li><strong>Datum kreiranja:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></span></li>
         <li><strong>Vrsta dostave:</strong> <span th:text="${order.waitReserved ? 'Čekanje na dostupnost rezervisanih artikala' : 'Isporuka dostupnih artikala prvo'}"></span></li>
     </ul>
 

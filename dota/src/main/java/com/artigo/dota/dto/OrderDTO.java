@@ -8,11 +8,12 @@ import org.hibernate.validator.constraints.Length;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class OrderDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotBlank(message = "Full name is required")
     @Length(max = 30, message = "Full name must be less than 30 characters")
