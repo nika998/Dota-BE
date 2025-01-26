@@ -11,6 +11,7 @@ import com.artigo.dota.mapper.OrderItemMapper;
 import com.artigo.dota.mapper.OrderMapper;
 import com.artigo.dota.repository.OrderRepository;
 import com.artigo.dota.service.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final EmailService emailService;
 
+    private final OrderService orderService;
+
     private final OrderItemService orderItemService;
 
     private final ProductDetailsService productDetailsService;
@@ -32,9 +35,10 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderItemMapper orderItemMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, EmailService emailService, OrderMapper orderMapper, OrderItemMapper orderItemMapper, OrderItemService orderItemService, ProductDetailsService productDetailsService) {
+    public OrderServiceImpl(OrderRepository orderRepository, EmailService emailService, @Lazy OrderService orderService, OrderMapper orderMapper, OrderItemMapper orderItemMapper, OrderItemService orderItemService, ProductDetailsService productDetailsService) {
         this.orderRepository = orderRepository;
         this.emailService = emailService;
+        this.orderService = orderService;
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
         this.orderItemService = orderItemService;
@@ -42,7 +46,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
     public OrderDTO processOrder(OrderDTO orderDTO) throws OrderItemsNonAvailableException, MailNotSentException {
 
         var itemsRecentlyNotAvailable = checkOrder(orderDTO.getOrderItems());
@@ -51,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderItemsNonAvailableException("Some of the ordered items are not available", orderDTO);
         }
 
-        OrderDO savedOrder = saveOrder(orderDTO);
+        OrderDO savedOrder = orderService.saveOrder(orderDTO);
 
         emailService.sendOrderMails(savedOrder);
 
@@ -72,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDO saveOrder(OrderDTO orderDTO) {
 
         List<OrderItemDO> orderItemDOs = orderDTO.getOrderItems().stream()

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,12 +27,20 @@
             font-size: 1rem;
             margin-bottom: 1.5rem;
         }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <p>Trenutno nema novih porudžbina.</p>
-    <p>Molimo vas da ponovo proverite kasnije za nove informacije.</p>
+    <p>Poštovani,</p>
+    <p>U toku prethodnog perioda nije bilo novih narudžbina.</p>
+    <p>Hvala na pažnji.</p>
+    <img th:src="${logoUrl}" alt="Logo">
 </div>
 </body>
 </html>

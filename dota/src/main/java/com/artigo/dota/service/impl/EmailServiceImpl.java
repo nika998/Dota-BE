@@ -126,21 +126,24 @@ public class EmailServiceImpl implements EmailService {
                 helper.setTo(recipient);
             }
 
+            var context = new Context();
+            context.setVariable("logoUrl", logoUrl);
+
             // Process the Thymeleaf template
             String emailContent;
             if (daily) {
                 helper.setSubject(emailProperties.getOrderExcelMailSubject());
                 if (!isExcelEmpty) {
-                    emailContent = templateEngine.process("dailyOrdersEmailTemplate.html", new Context());
+                    emailContent = templateEngine.process("dailyOrdersEmailTemplate.html", context);
                 } else {
-                    emailContent = templateEngine.process("noOrdersEmailTemplate.html", new Context());
+                    emailContent = templateEngine.process("noOrdersEmailTemplate.html", context);
                 }
             } else {
                 helper.setSubject(emailProperties.getOrderExcelMonthlyMailSubject());
                 if (!isExcelEmpty) {
-                    emailContent = templateEngine.process("monthlyOrdersEmailTemplate.html", new Context());
+                    emailContent = templateEngine.process("monthlyOrdersEmailTemplate.html", context);
                 } else {
-                    emailContent = templateEngine.process("noOrdersEmailTemplate.html", new Context());
+                    emailContent = templateEngine.process("noOrdersEmailTemplate.html", context);
                 }
             }
 
@@ -178,6 +181,7 @@ public class EmailServiceImpl implements EmailService {
             // Process the HTML template with Thymeleaf
             Context context = new Context();
             context.setVariable("contactForm", contactFormDTO);
+            context.setVariable("logoUrl", logoUrl);
             String htmlContent = templateEngine.process("contactFormEmailTemplate", context);
 
             helper.setText(htmlContent, true); // Set the HTML content
@@ -296,13 +300,16 @@ public class EmailServiceImpl implements EmailService {
                 helper.setTo(recipient);
             }
 
+            var context = new Context();
+            context.setVariable("logoUrl", logoUrl);
+
             // Process the Thymeleaf template
             String emailContent;
             helper.setSubject(emailProperties.getNewsletterExcelMailSubject());
             if (!isExcelEmpty) {
-                emailContent = templateEngine.process("subReportEmailTemplate.html", new Context());
+                emailContent = templateEngine.process("subReportEmailTemplate.html", context);
             } else {
-                emailContent = templateEngine.process("noSubReportEmailTemplate.html", new Context());
+                emailContent = templateEngine.process("noSubReportEmailTemplate.html", context);
             }
 
             // Set the email content

@@ -62,7 +62,7 @@ aws:
 app:
   base-url: ${BASE_URL}
   newsletter:
-    unsubscribe-path: '/dota/newsletter/unsubscribe'
+    unsubscribe-path: '/newsletter/unsubscribe'
   health-check:
     rate: ${HEALTH_CHECK_RATE}
   fe-home-path: ${FE_HOME_PATH}

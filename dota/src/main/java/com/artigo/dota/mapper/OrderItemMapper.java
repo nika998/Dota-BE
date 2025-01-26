@@ -6,11 +6,13 @@ import com.artigo.dota.entity.ProductDetailsDO;
 import com.artigo.dota.repository.ProductDetailsRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
-@Mapper
+
+@Mapper(componentModel = "spring")
 public abstract class OrderItemMapper {
 
     @Autowired

@@ -34,15 +34,22 @@
         strong {
             color: #333;
         }
-         p {
+        p {
             text-align: left;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 1rem;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
 <div class="container">
+    <p>Poštovani,</p>
     <p>Primljena je nova poruka putem kontakt forme:</p>
     <ul>
         <li><strong>Ime i prezime:</strong> <span th:text="${#strings.escapeXml(contactForm.fullName)}"></span></li>
@@ -50,6 +57,8 @@
         <li th:if="${contactForm.phone}"><strong>Telefon:</strong> <span th:text="${#strings.escapeXml(contactForm.phone)}"></span></li>
         <li th:if="${contactForm.message}"><strong>Poruka:</strong> <span th:text="${#strings.escapeXml(contactForm.message)}"></span></li>
     </ul>
+    <p>Hvala na pažnji.</p>
+    <img th:src="${logoUrl}" alt="Logo">
 </div>
 </body>
 </html>

@@ -6,7 +6,7 @@ import com.artigo.dota.entity.ProductDetailsDO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = {ProductImageMapper.class})
 public interface ProductDetailsMapper {
     @Mapping(target = "isDeleted", expression = "java(mapIsDeleted())")
     ProductDetailsDO dtoToEntity(ProductDetailsDTO productDetailsDTO);

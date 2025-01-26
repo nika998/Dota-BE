@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,8 @@ public class NewsletterServiceImpl implements NewsletterService {
 
     private final EmailService emailService;
 
+    private final NewsletterService newsletterService;
+
     private final NewsletterMapper newsletterMapper;
 
     @Value("${newsletter.unsubscribe.successful}")
@@ -42,9 +45,10 @@ public class NewsletterServiceImpl implements NewsletterService {
     @Value("${newsletter.unsubscribe.unsuccessful}")
     private String unsubscribeUnsuccessfulMessage;
 
-    public NewsletterServiceImpl(NewsletterRepository newsletterRepository, EmailService emailService, NewsletterMapper newsletterMapper) {
+    public NewsletterServiceImpl(NewsletterRepository newsletterRepository, EmailService emailService, @Lazy NewsletterService newsletterService, NewsletterMapper newsletterMapper) {
         this.newsletterRepository = newsletterRepository;
         this.emailService = emailService;
+        this.newsletterService = newsletterService;
         this.newsletterMapper = newsletterMapper;
     }
 
@@ -56,15 +60,22 @@ public class NewsletterServiceImpl implements NewsletterService {
             return newsletterMapper.entityToDtoExists(existingNewsLetter.get());
         }
 
+        var savedNewsletterDO = newsletterService.saveNewsletter(newsletterDTO);
+
+        emailService.sendNewsletterConformationMail(savedNewsletterDO);
+
+        return newsletterMapper.entityToDtoSucces(savedNewsletterDO);
+    }
+
+    @Transactional
+    @Override
+    public NewsletterDO saveNewsletter(NewsletterDTO newsletterDTO) {
+
         var newsletterDO = newsletterMapper.dtoToEntity(newsletterDTO);
         newsletterDO.setCreatedAt(LocalDateTime.now());
         newsletterDO.setUuid(UUID.randomUUID().toString());
 
-        var savedNewsletterDO = newsletterRepository.save(newsletterDO);
-
-        emailService.sendNewsletterConformationMail(newsletterDO);
-
-        return newsletterMapper.entityToDtoSucces(savedNewsletterDO);
+        return newsletterRepository.save(newsletterDO);
     }
 
     @Override
@@ -84,7 +95,7 @@ public class NewsletterServiceImpl implements NewsletterService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 10 * * *")//Every day at 10AM
+    @Scheduled(cron = "0 0 10 * * *")
     @Transactional
     public void exportAllSubsMadeToday() {
         LocalDateTime startDate = LocalDateTime.now().minusHours(24);

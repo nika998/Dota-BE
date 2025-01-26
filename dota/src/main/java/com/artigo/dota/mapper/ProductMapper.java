@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = {ProductDetailsMapper.class})
 public abstract class ProductMapper {
 
     @Autowired

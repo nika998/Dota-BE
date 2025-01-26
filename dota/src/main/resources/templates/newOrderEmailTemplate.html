@@ -81,7 +81,7 @@
         <li><strong>Opis:</strong> <span th:text="${#strings.escapeXml(order.description)}"></span></li>
         <li><strong>Ukupna cena:</strong> <span th:text="${formattedPrice}"></span></li>
         <li><strong>Datum kreiranja:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></span></li>
-        <li><strong>Vrsta dostave:</strong> <span th:text="${order.waitReserved ? 'Čekanje na dostupnost rezervisanih artikala' : 'Isporuka dostupnih artikala prvo'}"></span></li>
+        <li><strong>Vrsta dostave:</strong> <span th:text="${order.waitReserved ? 'Isporuka nakon što svi artikli postanu dotupni' : 'Isporuka dostupnih artikala prvo'}"></span></li>
     </ul>
 
     <!-- Tabela sa artiklima u porudžbini -->

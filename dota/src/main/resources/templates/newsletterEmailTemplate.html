@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <title>Novi Korisnici za Newsletter</title>
     <style>
-        container {
+        body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .content {
+        .container {
+            text-align: center;
             padding: 2em;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            min-height: 40vh;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            width: 90%;
+            max-width: 600px;
+        }
+        .content {
+            margin-bottom: 2em;
+
         }
         h1 {
             color: #8E44AD;
@@ -32,7 +45,9 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         img {
-            width: 150px;
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
             height: auto;
         }
     </style>
@@ -42,7 +57,7 @@
     <div class="content">
         <h1>Novi korisnici za newsletter</h1>
         <th:block th:if="${not #lists.isEmpty(newsletters)}">
-            <p>Ispod se nalazi lista svih korisnika koji su se pretplatili da primaju novosti u zadnjih 24h:</p>
+            <p>Ispod se nalazi lista svih korisnika koji su se pretplatili da primaju novosti u prethodna 24 časa:</p>
             <ul>
                 <th:block th:each="newsletter : ${newsletters}">
                     <li th:utext="${newsletter.email}"></li>
@@ -56,7 +71,7 @@
     <div class="content">
         <h1>Odjavljeni korisnici za newsletter</h1>
         <th:block th:if="${not #lists.isEmpty(unsubscribedEmails)}">
-            <p>Ispod se nalazi lista svih korisnika koji su se odjavili u zadnjih 24h:</p>
+            <p>Ispod se nalazi lista svih korisnika koji su se odjavili u prethodna 24 časa:</p>
             <ul>
                 <th:block th:each="email : ${unsubscribedEmails}">
                     <li th:utext="${email}"></li>
